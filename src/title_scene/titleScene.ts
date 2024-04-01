@@ -86,7 +86,7 @@ export class TitleScene extends g.Scene {
                 assetId = "se_perfect";
                 this.bloomSakura(Rating.PERFECT.scoreRate, note);
             } else if (withinTimingWindow(Rating.EXCELLENT, note.ticks)) {
-                message = "エクセレントなリズムだ！";
+                message = "エクセレント！";
                 assetId = "se_excellent";
                 this.bloomSakura(Rating.EXCELLENT.scoreRate, note);
             } else if (withinTimingWindow(Rating.GOOD, note.ticks)) {
@@ -103,8 +103,7 @@ export class TitleScene extends g.Scene {
         this.notesLayer.append(note);
 
         const failed = (): void => {
-            this.playSE("se_bad");
-            this.showMessage("コツはリズムだ！");
+            // this.playSE("se_bad"); 
             this.bloomLayer.append(new Dispersal(this, note));
         };
     };
@@ -180,7 +179,7 @@ export class TitleScene extends g.Scene {
         this.guide = new NoteGuide(this, this.posTable[0]);
         this.append(this.guide);
 
-        this.onUpdate.add(this.updateHandler);
+        // this.onUpdate.add(this.updateHandler);
         this.onPointDownCapture.add((ev: g.PointDownEvent) => {
             if (ev.target !== this.startButton) {
                 this.clickListener();
@@ -225,6 +224,9 @@ export class TitleScene extends g.Scene {
     private clickListener = (): void => {
         if (!this.isClicked) {
             this.isClicked = true;
+            this.onUpdate.add(this.updateHandler);
+            this.messageLabel.text = "クリックのタイミングをリズムで覚えよう！";
+            this.messageLabel.invalidate();
         }
 
         const notes = this.notesLayer.children;

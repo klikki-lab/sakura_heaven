@@ -20,50 +20,64 @@ export class Dispersal extends g.E {
             const petal = new Petal(scene, "img_petal");
 
             const radius = petal.height * 0.5;
-            const vx = Math.cos(angle);
-            const vy = Math.sin(angle);
-            petal.x = vx * radius;
-            petal.y = vy * radius;
+            const x = Math.cos(angle) * radius;
+            const y = Math.sin(angle) * radius;
+            petal.x = x;
+            petal.y = y;
+            petal.velocity.x = 4 * (g.game.random.generate() * 2 - 1);
+            petal.velocity.y = 2 * (2 - g.game.random.generate());
             petal.angle = i * Dispersal.ANGLE_RATE;
-            // petal.opacity = 0.8;
-            // petal.velocity.x = ((vx * radius * Sakura.RADIUS_RATE) - petal.x) / steps;
-            // petal.velocity.y = ((vy * radius * Sakura.RADIUS_RATE) - petal.y) / steps;
             petal.modified();
 
             this.append(petal);
             this._petals.push(petal);
         }
 
-        this.disperse();
+        // this.disperse();
+        this.onUpdate.add(this.updateHandler);
     }
 
     private updateHandler = () => {
+        let isFinish = false;
         this._petals.forEach(petal => {
             petal.x += petal.velocity.x;
             petal.y += petal.velocity.y;
-            petal.velocity.x *= 0.97;
-            petal.velocity.y *= 0.97;
-            petal.opacity = 1 - this._ticks / g.game.fps;
-            petal.scale(petal.opacity);
-            petal.angle += petal.velocity.y;
+            if (g.game.age % 4 === 0) {
+                petal.velocity.x = 4 * (g.game.random.generate() * 2 - 1);
+            }
+            const rad = g.game.age % (g.game.fps * 10) / 8;
+            petal.scaleX = Math.cos(rad);
+            petal.scaleY = Math.sin(rad);
+            petal.opacity *= 0.92;
             petal.modified();
+
+            if (petal.opacity <= 0.01) {
+                isFinish = true;
+                return;
+            }
         });
-        this._ticks++;
-        if (this._ticks >= g.game.fps) {
+
+        if (isFinish) {
             this.onDispersed.fire(this);
             this.destroy();
             return true;
         }
+        // this._ticks++;
+        // if (this._ticks >= g.game.fps) {
+        //     this.onDispersed.fire(this);
+        //     this.destroy();
+        //     return true;
+        // }
         return false;
     };
 
-    disperse = (): void => {
-        const rate = 1 / g.game.fps;
-        this._petals.forEach(petal => {
-            petal.velocity.x = (g.game.random.generate() * 2 - 1) * 2 * petal.width * rate;
-            petal.velocity.y = (g.game.random.generate() + 1) * 3 * petal.height * rate;
-        });
+    // disperse = (): void => {
+    //     const rate = 1 / g.game.fps;
+    //     this._petals.forEach(petal => {
+    //         petal.velocity.x = (g.game.random.generate() * 2 - 1) * 2 * petal.width * rate;
+    //         petal.velocity.y = (g.game.random.generate() + 1) * 3 * petal.height * rate;
+    //     });
 
-        this.onUpdate.add(this.updateHandler);
-    };
+    //     this.onUpdate.add(this.updateHandler);
+    // };
 }
