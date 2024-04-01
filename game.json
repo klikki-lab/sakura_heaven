@@ -1,0 +1,288 @@
+{
+	"width": 1280,
+	"height": 720,
+	"fps": 60,
+	"maxPoints": 1,
+	"main": "./script/_bootstrap.js",
+	"assets": {
+		"_bootstrap": {
+			"type": "script",
+			"path": "script/_bootstrap.js",
+			"global": true
+		},
+		"main": {
+			"type": "script",
+			"path": "script/main.js",
+			"global": true
+		},
+		"parameterObject": {
+			"type": "script",
+			"path": "script/parameterObject.js",
+			"global": true
+		},
+		"se_bad": {
+			"type": "audio",
+			"path": "audio/se_bad",
+			"systemId": "sound",
+			"duration": 373,
+			"hint": {
+				"extensions": [
+					".m4a",
+					".ogg"
+				]
+			}
+		},
+		"se_excellent": {
+			"type": "audio",
+			"path": "audio/se_excellent",
+			"systemId": "sound",
+			"duration": 82,
+			"hint": {
+				"extensions": [
+					".m4a",
+					".ogg"
+				]
+			}
+		},
+		"se_good": {
+			"type": "audio",
+			"path": "audio/se_good",
+			"systemId": "sound",
+			"duration": 70,
+			"hint": {
+				"extensions": [
+					".m4a",
+					".ogg"
+				]
+			}
+		},
+		"se_perfect": {
+			"type": "audio",
+			"path": "audio/se_perfect",
+			"systemId": "sound",
+			"duration": 120,
+			"hint": {
+				"extensions": [
+					".m4a",
+					".ogg"
+				]
+			}
+		},
+		"se_spawn": {
+			"type": "audio",
+			"path": "audio/se_spawn",
+			"systemId": "sound",
+			"duration": 79,
+			"hint": {
+				"extensions": [
+					".m4a",
+					".ogg"
+				]
+			}
+		},
+		"img_bad": {
+			"type": "image",
+			"path": "image/img_bad.png",
+			"width": 72,
+			"height": 34
+		},
+		"img_excellent": {
+			"type": "image",
+			"path": "image/img_excellent.png",
+			"width": 163,
+			"height": 35
+		},
+		"img_good": {
+			"type": "image",
+			"path": "image/img_good.png",
+			"width": 94,
+			"height": 35
+		},
+		"img_perfect": {
+			"type": "image",
+			"path": "image/img_perfect.png",
+			"width": 153,
+			"height": 39
+		},
+		"img_sakura": {
+			"type": "image",
+			"path": "image/img_sakura.png",
+			"width": 127,
+			"height": 121
+		},
+		"img_sakura_border": {
+			"type": "image",
+			"path": "image/img_sakura_border.png",
+			"width": 130,
+			"height": 124
+		},
+		"img_sakura_petal": {
+			"type": "image",
+			"path": "image/img_sakura_petal.png",
+			"width": 40,
+			"height": 64
+		},
+		"arrayUtil": {
+			"type": "script",
+			"path": "script/common/arrayUtil.js",
+			"global": true
+		},
+		"entity": {
+			"type": "script",
+			"path": "script/common/entity.js",
+			"global": true
+		},
+		"fontSize": {
+			"type": "script",
+			"path": "script/common/fontSize.js",
+			"global": true
+		},
+		"velocity": {
+			"type": "script",
+			"path": "script/common/velocity.js",
+			"global": true
+		},
+		"chart": {
+			"type": "script",
+			"path": "script/game_scene/chart/chart.js",
+			"global": true
+		},
+		"chartSequencer": {
+			"type": "script",
+			"path": "script/game_scene/chart/chartSequencer.js",
+			"global": true
+		},
+		"ratingScore": {
+			"type": "script",
+			"path": "script/game_scene/effect/ratingScore.js",
+			"global": true
+		},
+		"gameScene": {
+			"type": "script",
+			"path": "script/game_scene/gameScene.js",
+			"global": true
+		},
+		"countdownTimer": {
+			"type": "script",
+			"path": "script/game_scene/hud/countdownTimer.js",
+			"global": true
+		},
+		"score": {
+			"type": "script",
+			"path": "script/game_scene/hud/score.js",
+			"global": true
+		},
+		"bgm_honjitsumouchoutennnari": {
+			"type": "audio",
+			"path": "audio/BGM159-131031-honjitsumouchoutennnari",
+			"systemId": "sound",
+			"duration": 77955,
+			"hint": {
+				"extensions": [
+					".m4a",
+					".ogg"
+				]
+			}
+		},
+		"img_petal": {
+			"type": "image",
+			"path": "image/img_petal.png",
+			"width": 40,
+			"height": 64
+		},
+		"dispersal": {
+			"type": "script",
+			"path": "script/game_scene/sakura/dispersal.js",
+			"global": true
+		},
+		"petal": {
+			"type": "script",
+			"path": "script/game_scene/sakura/petal.js",
+			"global": true
+		},
+		"bloom": {
+			"type": "script",
+			"path": "script/game_scene/sakura/bloom.js",
+			"global": true
+		},
+		"conductor": {
+			"type": "script",
+			"path": "script/game_scene/sakura/conductor.js",
+			"global": true
+		},
+		"bloomEffect": {
+			"type": "script",
+			"path": "script/game_scene/effect/bloomEffect.js",
+			"global": true
+		},
+		"petalEffect": {
+			"type": "script",
+			"path": "script/game_scene/effect/petalEffect.js",
+			"global": true
+		},
+		"img_sakura_no_gradation": {
+			"type": "image",
+			"path": "image/img_sakura_no_gradation.png",
+			"width": 127,
+			"height": 121
+		},
+		"startLabel": {
+			"type": "script",
+			"path": "script/game_scene/startLabel.js",
+			"global": true
+		},
+		"sakuraNote": {
+			"type": "script",
+			"path": "script/game_scene/sakura/sakuraNote.js",
+			"global": true
+		},
+		"loadingScene": {
+			"type": "script",
+			"path": "script/loading_scene/loadingScene.js",
+			"global": true
+		},
+		"titleScene": {
+			"type": "script",
+			"path": "script/title_scene/titleScene.js",
+			"global": true
+		},
+		"title": {
+			"type": "script",
+			"path": "script/title_scene/title.js",
+			"global": true
+		},
+		"titleSceneTimer": {
+			"type": "script",
+			"path": "script/title_scene/titleSceneTimer.js",
+			"global": true
+		},
+		"common": {
+			"type": "script",
+			"path": "script/common/common.js",
+			"global": true
+		},
+		"button": {
+			"type": "script",
+			"path": "script/title_scene/button.js",
+			"global": true
+		},
+		"blackout": {
+			"type": "script",
+			"path": "script/game_scene/blackout.js",
+			"global": true
+		}
+	},
+	"moduleMainScripts": {},
+	"environment": {
+		"sandbox-runtime": "3",
+		"nicolive": {
+			"supportedModes": [
+				"ranking"
+			],
+			"preferredSessionParameters": {
+				"totalTimeLimit": 85
+			}
+		}
+	},
+	"globalScripts": []
+}
