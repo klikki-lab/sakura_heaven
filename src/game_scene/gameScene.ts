@@ -58,8 +58,13 @@ export class GameScene extends g.Scene {
             this.createNote();
         });
         sequencer.onFinish.add(_ => {
-            this.gameOver();
-            this.onUpdate.add(() => this.effectLayer.append(new PetalEffect(this, this.guide)));
+            this.setTimeout(() => {
+                this.gameOver();
+                this.onUpdate.add(() => this.effectLayer.append(new PetalEffect(this, this.guide)));
+            }, 200);
+            if (this.onPointDownCapture.contains(this.waitClickListener)) {
+                this.onPointDownCapture.remove(this.waitClickListener);
+            }
             this.onPointDownCapture.add(this.addClickListner);
         });
         return sequencer;
@@ -154,9 +159,6 @@ export class GameScene extends g.Scene {
     };
 
     private gameOver = (): void => {
-        if (this.onPointDownCapture.contains(this.waitClickListener)) {
-            this.onPointDownCapture.remove(this.waitClickListener);
-        }
         const gameOver = this.createLabel(this.font, "おわり");
         gameOver.x = g.game.width / 2;
         gameOver.y = g.game.height / 2;

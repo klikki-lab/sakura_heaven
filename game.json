@@ -205,11 +205,6 @@
 			"path": "script/game_scene/sakura/bloom.js",
 			"global": true
 		},
-		"conductor": {
-			"type": "script",
-			"path": "script/game_scene/sakura/conductor.js",
-			"global": true
-		},
 		"bloomEffect": {
 			"type": "script",
 			"path": "script/game_scene/effect/bloomEffect.js",
@@ -269,6 +264,11 @@
 		"blackout": {
 			"type": "script",
 			"path": "script/game_scene/blackout.js",
+			"global": true
+		},
+		"noteGuide": {
+			"type": "script",
+			"path": "script/game_scene/sakura/noteGuide.js",
 			"global": true
 		}
 	},
