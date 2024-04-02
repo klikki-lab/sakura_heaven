@@ -68,12 +68,12 @@ export class GameScene extends g.Scene {
             this.setTimeout(() => {
                 this.gameOver();
                 this.onUpdate.add(() => this.effectLayer.append(new PetalEffect(this, this.guide)));
-            }, 200);
+                this.onPointDownCapture.add(addClickListner);
+                this.keyEvent?.onKeyDown.add(addClickListner);
+            }, 500);
             if (this.onPointDownCapture.contains(this.waitClickListener)) {
                 this.onPointDownCapture.remove(this.waitClickListener);
             }
-            this.onPointDownCapture.add(addClickListner);
-            this.keyEvent?.onKeyDown.add(addClickListner);
         });
         const addClickListner = (): void => {
             this.playSoundEffect("se_spawn");
@@ -227,11 +227,11 @@ export class GameScene extends g.Scene {
         } else if (resultRate >= 0.90) {
             rank = "S";
             msg = "超満開！";
-        } else if (resultRate >= 0.75) {
+        } else if (resultRate >= 0.80) {
             rank = "A";
             msg = "満開！さらに上を目指そう！";
         } else {
-            const rate = resultRate / 0.75;
+            const rate = resultRate / 0.80;
             if (rate >= 0.7) {
                 rank = "B";
                 msg = `${Math.floor(rate * 10)}分咲き`;
