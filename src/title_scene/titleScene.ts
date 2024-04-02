@@ -180,14 +180,14 @@ export class TitleScene extends g.Scene {
             if (ev.target !== this.startButton) {
                 this.clickListener();
                 this.keyEvent = new KeyEvent();
-                this.keyEvent.addEventListener();
+                this.keyEvent.addListener();
                 this.keyEvent.onKeyDown.add(this.clickListener);
             }
         });
     };
 
     private finishTitleScene = (isClicked: boolean): void => {
-        this.keyEvent?.removeEventListener();
+        this.keyEvent?.removeListener();
         this.onFinish.fire({ isAlreadyClicked: isClicked });
     };
 

@@ -3,21 +3,21 @@ export class KeyEvent {
     onKeyDown: g.Trigger<void> = new g.Trigger();
     private isKeyDown: boolean = false;
 
-    addEventListener = () => {
+    addListener = () => {
         if (typeof window !== "undefined") {
-            window.addEventListener('keydown', this.keyDownListener);
-            window.addEventListener('keyup', this.keyUpListener);
+            window.addEventListener('keydown', this.keyDown);
+            window.addEventListener('keyup', this.keyUp);
         }
     };
 
-    removeEventListener = () => {
+    removeListener = () => {
         if (typeof window !== "undefined") {
-            window.removeEventListener('keydown', this.keyDownListener);
-            window.removeEventListener('keyup', this.keyUpListener);
+            window.removeEventListener('keydown', this.keyDown);
+            window.removeEventListener('keyup', this.keyUp);
         }
     }
 
-    private keyDownListener = (ev: KeyboardEvent) => {
+    private keyDown = (ev: KeyboardEvent) => {
         if (ev.key === "z" || ev.key === "Z") {
             if (this.isKeyDown) return;
 
@@ -26,7 +26,7 @@ export class KeyEvent {
         }
     };
 
-    private keyUpListener = (ev: KeyboardEvent) => {
+    private keyUp = (ev: KeyboardEvent) => {
         if (ev.key === "z" || ev.key === "Z") {
             this.isKeyDown = false;
         }

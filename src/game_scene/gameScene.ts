@@ -301,7 +301,7 @@ export class GameScene extends g.Scene {
 
             this.onPointDownCapture.add(this.clickListener);
             this.keyEvent = new KeyEvent();
-            this.keyEvent.addEventListener();
+            this.keyEvent.addListener();
             this.keyEvent.onKeyDown.add(this.clickListener);
         });
         audioPlayer.onStop.add((ev: g.AudioPlayerEvent) => ev.player.stop());
