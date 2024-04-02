@@ -46,7 +46,7 @@ export class Dispersal extends g.E {
             const rad = (g.game.age + index * g.game.fps) % (g.game.fps * 10) / 16;
             petal.scaleX = Math.cos(rad);
             petal.scaleY = Math.sin(rad);
-            petal.opacity *= 0.92;
+            petal.opacity *= 0.95;
             petal.modified();
 
             if (petal.opacity <= 0.01) {
