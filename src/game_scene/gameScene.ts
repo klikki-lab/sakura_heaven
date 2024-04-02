@@ -73,6 +73,7 @@ export class GameScene extends g.Scene {
                 this.onPointDownCapture.remove(this.waitClickListener);
             }
             this.onPointDownCapture.add(addClickListner);
+            this.keyEvent?.onKeyDown.add(addClickListner);
         });
         const addClickListner = (): void => {
             this.playSoundEffect("se_spawn");
