@@ -77,7 +77,7 @@ export class RatingScore extends g.Sprite {
             anchorX: .5,
             anchorY: .5,
             x: area.x,
-            y: area.y - area.height * .5,
+            y: area.y - area.height * .75,
         });
         this.scale(1 + (rating.scoreRate / Rating.PERFECT.scoreRate) * 1.5);
         this.onUpdate.add(this.updateHandler);
