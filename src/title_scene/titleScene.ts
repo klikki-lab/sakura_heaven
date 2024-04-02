@@ -159,7 +159,7 @@ export class TitleScene extends g.Scene {
         this.append(this.messageLabel);
 
         const buttonFont = Common.createDynamicFont(FontSize.MEDIUM, "sans-serif", "white");
-        this.startButton = new Button(this, buttonFont, "今すぐスタート");
+        this.startButton = new Button(this, buttonFont, "今すぐはじめる");
         this.startButton.x = g.game.width - this.startButton.width * 0.75;
         this.startButton.y = g.game.height - this.startButton.height * 0.75;
         this.startButton.modified();

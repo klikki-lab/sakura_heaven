@@ -7,7 +7,7 @@ export class TitleSceneTimer extends g.Label {
     constructor(scene: g.Scene, font: g.DynamicFont, private remainingSec: number) {
         super({
             scene: scene,
-            text: `ゲーム開始まで ${remainingSec} 秒`,
+            text: `開始まで ${remainingSec} 秒`,
             font: font,
             anchorX: .5,
             anchorY: .5,
@@ -27,7 +27,7 @@ export class TitleSceneTimer extends g.Label {
     private updateHandler = (): void => {
         this.remainingSec -= 1 / g.game.fps;
         const sec = Math.ceil(this.remainingSec);
-        const text = `ゲーム開始まで ${sec} 秒`;
+        const text = `開始まで ${sec} 秒`;
         if (this.text !== text) {
             this.text = text;
             this.invalidate();

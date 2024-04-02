@@ -41,7 +41,7 @@ export class SakuraNote extends g.Sprite {
     };
 
     private destroyHandler = (): void => {
-        this.opacity *= .8;
+        this.opacity *= .95;
         this.modified();
         if (this.opacity < 0.01) {
             this.destroy();
