@@ -270,6 +270,11 @@
 			"type": "script",
 			"path": "script/game_scene/sakura/noteGuide.js",
 			"global": true
+		},
+		"keyEvent": {
+			"type": "script",
+			"path": "script/common/keyEvent.js",
+			"global": true
 		}
 	},
 	"moduleMainScripts": {},

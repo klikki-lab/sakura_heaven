@@ -11,11 +11,9 @@ export class PetalEffect extends Petal {
         this.x = pos.x;
         this.y = pos.y;
 
-        this.velocity.x = (g.game.random.generate() * 2 - 1) * this.width * (1 / g.game.fps);
-        this.velocity.y = (g.game.random.generate() * 2 - 1) * this.height * (1 / g.game.fps);
+        this.velocity.x = (g.game.random.generate() * 2 - 1);
+        this.velocity.y = (g.game.random.generate() * 2 - 1);
         this.angle = g.game.random.generate() * 360;
-        this.cos = Math.abs(Math.cos(this.angle) * (1 / g.game.fps));
-        this.sin = Math.abs(Math.sin(this.angle) * (1 / g.game.fps));
         this.scale(0);
         this.opacity = 1;
 
@@ -27,10 +25,9 @@ export class PetalEffect extends Petal {
     private updateHandler = () => {
         this.x += this.velocity.x;
         this.y += this.velocity.y;
+        this.scale((1 - this.opacity) * .5);
         this.opacity *= 0.95;
-        this.scaleX += this.cos;
-        this.scaleY += this.cos;
-        this.angle += this.cos + this.sin;
+        this.angle += this.velocity.x;
         this.modified();
         if (this.opacity <= 0.01) {
             this.destroy();

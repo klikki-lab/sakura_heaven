@@ -1,11 +1,28 @@
-export const Rating = {
+type RatingProps = {
+    readonly scoreRate: number,
+    readonly timingWindow: {
+        readonly min: number,
+        readonly max: number,
+    },
+    readonly imageId: string,
+    readonly audioId: string,
+};
+
+type Rate = "BAD" | "GOOD" | "EXCELLENT" | "PERFECT";
+
+type RatingType = {
+    [key in Rate]: RatingProps;
+}
+
+export const Rating: RatingType = {
     BAD: {
         scoreRate: 0,
         timingWindow: {
             min: -5,
             max: 5,
         },
-        path: "img_bad",
+        imageId: "img_bad",
+        audioId: "se_bad",
     },
     GOOD: {
         scoreRate: 1,
@@ -13,7 +30,8 @@ export const Rating = {
             min: -4,
             max: 4,
         },
-        path: "img_good",
+        imageId: "img_good",
+        audioId: "se_good",
     },
     EXCELLENT: {
         scoreRate: 2,
@@ -21,7 +39,8 @@ export const Rating = {
             min: -2,
             max: 2,
         },
-        path: "img_excellent",
+        imageId: "img_excellent",
+        audioId: "se_excellent",
     },
     PERFECT: {
         scoreRate: 3,
@@ -29,29 +48,38 @@ export const Rating = {
             min: 0,
             max: 1,
         },
-        path: "img_perfect",
+        imageId: "img_perfect",
+        audioId: "se_perfect",
     }
 } as const;
 
 export type Rating = (typeof Rating)[keyof typeof Rating];
 
-export const withinTimingWindow = (rating: Rating, frame: number): boolean =>
-    rating.timingWindow.min <= frame && rating.timingWindow.max >= frame;
+export const withinTimingWindow = (frame: number): Rating => {
+    if (Rating.PERFECT.timingWindow.min <= frame && Rating.PERFECT.timingWindow.max >= frame) {
+        return Rating.PERFECT;
+    } else if (Rating.EXCELLENT.timingWindow.min <= frame && Rating.EXCELLENT.timingWindow.max >= frame) {
+        return Rating.EXCELLENT;
+    } else if (Rating.GOOD.timingWindow.min <= frame && Rating.GOOD.timingWindow.max >= frame) {
+        return Rating.GOOD;
+    }
+    return Rating.BAD;
+}
 
 export class RatingScore extends g.Sprite {
 
     private _frame: number = 0;
 
-    constructor(scene: g.Scene, area: g.CommonArea, ratings: Rating) {
+    constructor(scene: g.Scene, area: g.CommonArea, rating: Rating) {
         super({
             scene: scene,
-            src: scene.asset.getImageById(ratings.path),
+            src: scene.asset.getImageById(rating.imageId),
             anchorX: .5,
             anchorY: .5,
             x: area.x,
             y: area.y - area.height * .5,
         });
-        this.scale(1 + (ratings.scoreRate / Rating.PERFECT.scoreRate) * 1.5);
+        this.scale(1 + (rating.scoreRate / Rating.PERFECT.scoreRate) * 1.5);
         this.onUpdate.add(this.updateHandler);
     }
 

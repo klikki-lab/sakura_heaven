@@ -9,7 +9,6 @@ export class Dispersal extends g.E {
     onDispersed: g.Trigger<Dispersal> = new g.Trigger();
 
     private _petals: Petal[] = [];
-    private _ticks: number = 0;
 
     constructor(scene: g.Scene, pos: g.CommonOffset) {
         super({ scene: scene, x: pos.x, y: pos.y });
@@ -24,8 +23,8 @@ export class Dispersal extends g.E {
             const y = Math.sin(angle) * radius;
             petal.x = x;
             petal.y = y;
-            petal.velocity.x = 4 * (g.game.random.generate() * 2 - 1);
-            petal.velocity.y = 2 * (2 - g.game.random.generate());
+            petal.velocity.x = 2 * (g.game.random.generate() * 2 - 1);
+            petal.velocity.y = 2 * (g.game.random.generate() + .5);
             petal.angle = i * Dispersal.ANGLE_RATE;
             petal.modified();
 
@@ -33,19 +32,18 @@ export class Dispersal extends g.E {
             this._petals.push(petal);
         }
 
-        // this.disperse();
         this.onUpdate.add(this.updateHandler);
     }
 
     private updateHandler = () => {
         let isFinish = false;
-        this._petals.forEach(petal => {
+        this._petals.forEach((petal, index) => {
             petal.x += petal.velocity.x;
             petal.y += petal.velocity.y;
-            if (g.game.age % 4 === 0) {
-                petal.velocity.x = 4 * (g.game.random.generate() * 2 - 1);
+            if (g.game.age % 4 === 0 && g.game.random.generate() < 0.5) {
+                petal.velocity.x = 2 * (g.game.random.generate() * 2 - 1);
             }
-            const rad = g.game.age % (g.game.fps * 10) / 8;
+            const rad = (g.game.age + index * g.game.fps) % (g.game.fps * 10) / 16;
             petal.scaleX = Math.cos(rad);
             petal.scaleY = Math.sin(rad);
             petal.opacity *= 0.92;
@@ -62,22 +60,6 @@ export class Dispersal extends g.E {
             this.destroy();
             return true;
         }
-        // this._ticks++;
-        // if (this._ticks >= g.game.fps) {
-        //     this.onDispersed.fire(this);
-        //     this.destroy();
-        //     return true;
-        // }
         return false;
     };
-
-    // disperse = (): void => {
-    //     const rate = 1 / g.game.fps;
-    //     this._petals.forEach(petal => {
-    //         petal.velocity.x = (g.game.random.generate() * 2 - 1) * 2 * petal.width * rate;
-    //         petal.velocity.y = (g.game.random.generate() + 1) * 3 * petal.height * rate;
-    //     });
-
-    //     this.onUpdate.add(this.updateHandler);
-    // };
 }

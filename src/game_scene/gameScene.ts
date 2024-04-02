@@ -16,6 +16,7 @@ import { ArrayUtil } from "../common/arrayUtil";
 import { TitleSceneParams } from "../title_scene/titleScene";
 import { Common } from "../common/common";
 import { Blackout } from "./blackout";
+import { KeyEvent } from "../common/keyEvent";
 
 export class GameScene extends g.Scene {
 
@@ -32,8 +33,14 @@ export class GameScene extends g.Scene {
     private timer: CountdownTimer;
     private blackout: Blackout;
     private waitMessage: g.Label;
+    private keyEvent: KeyEvent;
 
-    constructor(_param: GameMainParameterObject, private _timeLimit: number, private volume: number, private params: TitleSceneParams) {
+    constructor(
+        _param: GameMainParameterObject,
+        private _timeLimit: number,
+        private volume: number,
+        private params: TitleSceneParams) {
+
         super({
             game: g.game,
             assetIds: [
@@ -54,7 +61,7 @@ export class GameScene extends g.Scene {
         const sequencer = new ChartSequencer(charts, bpm, timeBase);
         sequencer.onStart.add(_ => { /* do nothing */ });
         sequencer.onNote.add(_ => {
-            this.asset.getAudioById("se_spawn").play();
+            this.playSoundEffect("se_spawn");
             this.createNote();
         });
         sequencer.onFinish.add(_ => {
@@ -65,52 +72,55 @@ export class GameScene extends g.Scene {
             if (this.onPointDownCapture.contains(this.waitClickListener)) {
                 this.onPointDownCapture.remove(this.waitClickListener);
             }
-            this.onPointDownCapture.add(this.addClickListner);
+            this.onPointDownCapture.add(addClickListner);
         });
+        const addClickListner = (): void => {
+            this.playSoundEffect("se_spawn");
+            this.guide.beat();
+            this.bloomLayer.append(new BloomEffect(this, this.guide, Rating.PERFECT.scoreRate));
+        };
         return sequencer;
     };
 
     private createNote = (): void => {
         const note = new SakuraNote(this, this.guide, this.sequencer.bpm);
-        note.onFailed.addOnce(note => {
-            this.bloomLayer.append(new Dispersal(this, note));
-            this.asset.getAudioById("se_bad").play();
-            this.createRatings(note, Rating.BAD);
-        });
+        note.onFailed.addOnce(_note => failed());
         note.onClicked.addOnce(note => {
-            let rating: Rating;
-            if (withinTimingWindow(Rating.PERFECT, note.ticks)) {
-                this.asset.getAudioById("se_perfect").play();
-                rating = Rating.PERFECT;
-                this.bloomSakura(rating.scoreRate, note);
-            } else if (withinTimingWindow(Rating.EXCELLENT, note.ticks)) {
-                this.asset.getAudioById("se_excellent").play();
-                rating = Rating.EXCELLENT;
-                this.bloomSakura(rating.scoreRate);
-            } else if (withinTimingWindow(Rating.GOOD, note.ticks)) {
-                this.asset.getAudioById("se_good").play();
-                rating = Rating.GOOD;
-                this.bloomSakura(rating.scoreRate);
-            } else {
-                this.asset.getAudioById("se_bad").play();
-                rating = Rating.BAD;
-                this.bloomLayer.append(new Dispersal(this, note));
+            const rating: Rating = withinTimingWindow(note.ticks);
+            switch (rating) {
+                case Rating.PERFECT:
+                    this.bloomSakura(rating.scoreRate, note);
+                    break;
+                case Rating.EXCELLENT:
+                case Rating.GOOD:
+                    this.bloomSakura(rating.scoreRate, this.guide);
+                    break;
+                case Rating.BAD:
+                    failed();
+                    return;
             }
-            //console.log(rating, node.ticks);
+            this.score.add(rating.scoreRate);
+            this.playSoundEffect(rating.audioId);
             this.createRatings(note, rating);
         });
+        const failed = () => {
+            const rating = Rating.BAD;
+            this.score.add(rating.scoreRate);
+            this.playSoundEffect(rating.audioId);
+            this.bloomLayer.append(new Dispersal(this, note));
+            this.createRatings(note, rating);
+        };
         this.notesLayer.append(note);
     };
 
-    private bloomSakura = (scoreRate: number, node: g.CommonOffset = this.guide) => {
-        this.bloomLayer.append(new BloomEffect(this, node, scoreRate));
-        this.bloomLayer.append(new Bloom(this, node, scoreRate));
-        this.score.add(scoreRate);
+    private bloomSakura = (scoreRate: number, target: g.CommonOffset) => {
+        this.bloomLayer.append(new BloomEffect(this, target, scoreRate));
+        this.bloomLayer.append(new Bloom(this, target, scoreRate));
     };
 
-    private createRatings = (node: SakuraNote, ratings: Rating) => {
-        const rating = new RatingScore(this, node, ratings);
-        this.ratingLayer.append(rating);
+    private createRatings = (note: SakuraNote, rating: Rating) => {
+        const ratingScore = new RatingScore(this, note, rating);
+        this.ratingLayer.append(ratingScore);
     }
 
     private updateHandler = () => {
@@ -204,7 +214,7 @@ export class GameScene extends g.Scene {
     };
 
     private createRank = (font: g.DynamicFont): g.Label => {
-        const resultRate = this.calcResultRate()
+        const resultRate = this.calcResultRate();
         let rank = "";
         let msg = "";
         if (resultRate >= 1.0) {
@@ -272,30 +282,34 @@ export class GameScene extends g.Scene {
         anchorY: .5,
     });
 
+    private playSoundEffect = (assetId: string): void => { this.asset.getAudioById(assetId).play(); };
+
     private createAudioPlayer = (startLabel: StartLabel): void => {
         const audiAsset = this.asset.getAudioById("bgm_honjitsumouchoutennnari");
-        const player = new g.MusicAudioSystem({
+        const audioPlayer = new g.MusicAudioSystem({
             id: audiAsset.id,
             resourceFactory: g.game.resourceFactory,
             volume: this.volume,
         }).createPlayer();
 
-        player.onPlay.add((_ev: g.AudioPlayerEvent) => {
+        audioPlayer.onPlay.add((_ev: g.AudioPlayerEvent) => {
             startLabel.show();
             startLabel.start(this.sequencer.bpm / 2);
 
             this.onUpdate.add(this.updateHandler);
 
             this.onPointDownCapture.add(this.clickListener);
-            this.addKyeboradListener();
+            this.keyEvent = new KeyEvent();
+            this.keyEvent.addEventListener();
+            this.keyEvent.onKeyDown.add(this.clickListener);
         });
-        player.onStop.add((ev: g.AudioPlayerEvent) => ev.player.stop());
+        audioPlayer.onStop.add((ev: g.AudioPlayerEvent) => ev.player.stop());
 
         if (this.params.isAlreadyClicked) {
-            player.play(audiAsset);
+            audioPlayer.play(audiAsset);
         } else {
             startLabel.hide();
-            this.waitScreenClick(player, audiAsset);
+            this.waitScreenClick(audioPlayer, audiAsset);
         }
     };
 
@@ -325,37 +339,6 @@ export class GameScene extends g.Scene {
             if ((note instanceof SakuraNote) && note.judge()) {
                 return;
             }
-        }
-    };
-
-    private addClickListner = (): void => {
-        this.asset.getAudioById("se_spawn").play();
-        this.guide.beat();
-        this.bloomLayer.append(new BloomEffect(this, this.guide, Rating.PERFECT.scoreRate));
-    };
-
-    private addKyeboradListener = (): void => {
-        const lowerCase = "z", upperCase = "Z";
-        let isKeyDown: boolean = false;
-
-        if (typeof window !== "undefined") {
-            window.addEventListener('keydown', ev => {
-                if (ev.key === lowerCase || ev.key === upperCase) {
-                    if (isKeyDown) return;
-
-                    isKeyDown = true;
-                    this.clickListener();
-
-                    if (this.sequencer.isFinished) {
-                        this.addClickListner();
-                    }
-                }
-            });
-            window.addEventListener('keyup', ev => {
-                if (ev.key === lowerCase || ev.key === upperCase) {
-                    isKeyDown = false;
-                }
-            });
         }
     };
 }

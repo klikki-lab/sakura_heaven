@@ -3,10 +3,10 @@ export class Button extends g.FilledRect {
     private static readonly DEFAULT_COLOR = "#ffaaaa";
     private static readonly SCALE_UP_RATE = 1.1;
 
-    onClick: g.Trigger<Button> = new g.Trigger();
+    onClickDown: g.Trigger<Button> = new g.Trigger();
     onClicked: g.Trigger<Button> = new g.Trigger();
 
-    private within: boolean = false;
+    private isClick: boolean = false;
 
     constructor(scene: g.Scene, font: g.DynamicFont, text: string, color: string = Button.DEFAULT_COLOR) {
 
@@ -40,23 +40,23 @@ export class Button extends g.FilledRect {
         };
 
         this.onPointDown.add(_ev => {
-            this.within = true;
+            this.isClick = true;
             setScale(Button.SCALE_UP_RATE);
-            this.onClick.fire(this);
+            this.onClickDown.fire(this);
         });
 
         this.onPointMove.add(ev => {
             const ex = ev.point.x + ev.startDelta.x;
             const ey = ev.point.y + ev.startDelta.y;
-            this.within = this.within && 0 <= ex && this.width >= ex && 0 <= ey && this.height >= ey;
-            setScale(this.within ? Button.SCALE_UP_RATE : 1.0);
+            this.isClick = this.isClick && 0 <= ex && this.width >= ex && 0 <= ey && this.height >= ey;
+            setScale(this.isClick ? Button.SCALE_UP_RATE : 1.0);
         });
 
         this.onPointUp.add(_ev => {
             setScale(1.0);
-            if (this.within) {
+            if (this.isClick) {
                 this.onClicked.fire(this);
-                this.within = false;
+                this.isClick = false;
             }
         });
     }

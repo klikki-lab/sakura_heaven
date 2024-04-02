@@ -1,4 +1,4 @@
-export class Title extends g.Label {
+export class TitleLabel extends g.Label {
 
     private _ticks: number = 0;
     private _beat: number = 0;

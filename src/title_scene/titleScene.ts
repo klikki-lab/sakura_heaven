@@ -1,7 +1,7 @@
 import { FontSize } from "../common/fontSize";
 import { GameMainParameterObject } from "../parameterObject";
 import { TitleSceneTimer } from "./titleSceneTimer";
-import { Title } from "./title";
+import { TitleLabel } from "./title";
 import { NoteGuide } from "../game_scene/sakura/noteGuide";
 import { ChartSequencer } from "../game_scene/chart/chartSequencer";
 import { Chart } from "../game_scene/chart/chart";
@@ -13,6 +13,7 @@ import { Rating, withinTimingWindow } from "../game_scene/effect/ratingScore";
 import { BloomEffect } from "../game_scene/effect/bloomEffect";
 import { Bloom } from "../game_scene/sakura/bloom";
 import { Button } from "./button";
+import { KeyEvent } from "../common/keyEvent";
 
 export interface TitleSceneParams {
     isAlreadyClicked: boolean;
@@ -25,14 +26,16 @@ export class TitleScene extends g.Scene {
     private sequencer: ChartSequencer;
     private posTable: g.CommonOffset[] = [];
     private guide: NoteGuide;
-    private title: Title;
+    private titleLabel: TitleLabel;
     private messageLabel: g.Label;
     private timingLabel: g.Label;
     private startButton: Button;
     private effectLayer: g.E;
     private notesLayer: g.E;
     private bloomLayer: g.E;
+    private keyEvent: KeyEvent;
 
+    private isButtonClicked: boolean = false;
     private isClicked: boolean = false;
 
     constructor(_param: GameMainParameterObject, private _timeLimit: number) {
@@ -53,7 +56,6 @@ export class TitleScene extends g.Scene {
 
     private createSequencer = (charts: number[][], bpm: number, timeBase: number): ChartSequencer => {
         const sequencer = new ChartSequencer(charts, bpm, timeBase);
-        // sequencer.onStart.add(_ => {   });
         sequencer.onNote.add(_ => {
             this.playSE("se_spawn");
             this.createNote();
@@ -68,10 +70,6 @@ export class TitleScene extends g.Scene {
                 this.timingLabel.hide();
             }, 250);
         });
-        sequencer.onFinish.add(_ => {
-            // this.onUpdate.add(() => this.effectLayer.append(new PetalEffect(this, this.conductor)));
-            // this.onPointDownCapture.add(_ev => this.addClickListner());
-        });
         return sequencer;
     };
 
@@ -79,26 +77,25 @@ export class TitleScene extends g.Scene {
         const note = new SakuraNote(this, this.guide, this.sequencer.bpm);
         note.onFailed.addOnce(_note => failed());
         note.onClicked.addOnce(note => {
-            let message = "";
-            let assetId = "";
-            if (withinTimingWindow(Rating.PERFECT, note.ticks)) {
-                message = "リズムカンペキ！";
-                assetId = "se_perfect";
-                this.bloomSakura(Rating.PERFECT.scoreRate, note);
-            } else if (withinTimingWindow(Rating.EXCELLENT, note.ticks)) {
-                message = "エクセレント！";
-                assetId = "se_excellent";
-                this.bloomSakura(Rating.EXCELLENT.scoreRate, note);
-            } else if (withinTimingWindow(Rating.GOOD, note.ticks)) {
-                message = "なかなかのリズムだ！";
-                assetId = "se_good";
-                this.bloomSakura(Rating.GOOD.scoreRate, note);
-            } else {
-                failed();
-                return;
+            const rating: Rating = withinTimingWindow(note.ticks);
+            switch (rating) {
+                case Rating.PERFECT:
+                    this.bloomSakura(rating.scoreRate, note);
+                    this.showMessage("リズムカンペキ！");
+                    break;
+                case Rating.EXCELLENT:
+                    this.bloomSakura(rating.scoreRate, this.guide);
+                    this.showMessage("エクセレント！");
+                    break;
+                case Rating.GOOD:
+                    this.bloomSakura(rating.scoreRate, this.guide);
+                    this.showMessage("イイ感じ！");
+                    break;
+                case Rating.BAD:
+                    failed();
+                    return;
             }
-            this.playSE(assetId);
-            this.showMessage(message);
+            this.playSE(rating.audioId);
         });
         this.notesLayer.append(note);
 
@@ -109,7 +106,7 @@ export class TitleScene extends g.Scene {
     };
 
     private playSE = (assetId: string): void => {
-        if (this.isClicked) {
+        if (this.isClicked || this.isButtonClicked) {
             this.asset.getAudioById(assetId).play();
         }
     };
@@ -125,9 +122,9 @@ export class TitleScene extends g.Scene {
         }, 750);
     };
 
-    private bloomSakura = (scoreRate: number, node: g.CommonOffset = this.guide) => {
-        this.bloomLayer.append(new BloomEffect(this, node, scoreRate));
-        this.bloomLayer.append(new Bloom(this, node, scoreRate));
+    private bloomSakura = (scoreRate: number, target: g.CommonOffset) => {
+        this.bloomLayer.append(new BloomEffect(this, target, scoreRate));
+        this.bloomLayer.append(new Bloom(this, target, scoreRate));
     };
 
     private updateHandler = () => {
@@ -149,9 +146,9 @@ export class TitleScene extends g.Scene {
         this.notesLayer = new g.E({ scene: this, parent: this, });
         this.bloomLayer = new g.E({ scene: this, parent: this, });
 
-        this.title = new Title(this, Common.createDynamicFont(FontSize.XL));
-        this.title.start(60);
-        this.append(this.title);
+        this.titleLabel = new TitleLabel(this, Common.createDynamicFont(FontSize.XL));
+        this.titleLabel.start(60);
+        this.append(this.titleLabel);
 
         const font = Common.createDynamicFont(FontSize.MEDIUM);
 
@@ -166,9 +163,9 @@ export class TitleScene extends g.Scene {
         this.startButton.x = g.game.width - this.startButton.width * 0.75;
         this.startButton.y = g.game.height - this.startButton.height * 0.75;
         this.startButton.modified();
-        this.startButton.onClick.add(_button => {
-            this.isClicked = true;
-            this.playSE("se_spawn");
+        this.startButton.onClickDown.add(_button => {
+            this.isButtonClicked = true;
+            this.playSE("se_good");
         });
         this.startButton.onClicked.add(_button => this.finishTitleScene(true));
         this.append(this.startButton);
@@ -179,16 +176,18 @@ export class TitleScene extends g.Scene {
         this.guide = new NoteGuide(this, this.posTable[0]);
         this.append(this.guide);
 
-        // this.onUpdate.add(this.updateHandler);
         this.onPointDownCapture.add((ev: g.PointDownEvent) => {
             if (ev.target !== this.startButton) {
                 this.clickListener();
+                this.keyEvent = new KeyEvent();
+                this.keyEvent.addEventListener();
+                this.keyEvent.onKeyDown.add(this.clickListener);
             }
         });
-        this.addKyeboradListener();
     };
 
     private finishTitleScene = (isClicked: boolean): void => {
+        this.keyEvent?.removeEventListener();
         this.onFinish.fire({ isAlreadyClicked: isClicked });
     };
 
@@ -216,7 +215,7 @@ export class TitleScene extends g.Scene {
 
     private createCountdownTimer = (font: g.DynamicFont): TitleSceneTimer => {
         const timer = new TitleSceneTimer(this, font, this._timeLimit);
-        timer.onFinish.addOnce(() => this.finishTitleScene(this.isClicked));
+        timer.onFinish.addOnce(() => this.finishTitleScene(this.isClicked || this.isButtonClicked));
         timer.start();
         return timer;
     };
@@ -225,8 +224,9 @@ export class TitleScene extends g.Scene {
         if (!this.isClicked) {
             this.isClicked = true;
             this.onUpdate.add(this.updateHandler);
-            this.messageLabel.text = "クリックのタイミングをリズムで覚えよう！";
+            this.messageLabel.text = "クリックのタイミングを覚えよう！";
             this.messageLabel.invalidate();
+            this.titleLabel.restart();
         }
 
         const notes = this.notesLayer.children;
@@ -236,27 +236,6 @@ export class TitleScene extends g.Scene {
             if ((note instanceof SakuraNote) && note.judge()) {
                 return;
             }
-        }
-    };
-
-    private addKyeboradListener = (): void => {
-        const lowerCase = "z", upperCase = "Z";
-        let isKeyDown: boolean = false;
-
-        if (typeof window !== "undefined") {
-            window.addEventListener('keydown', ev => {
-                if (ev.key === lowerCase || ev.key === upperCase) {
-                    if (isKeyDown) return;
-
-                    isKeyDown = true;
-                    this.clickListener();
-                }
-            });
-            window.addEventListener('keyup', ev => {
-                if (ev.key === lowerCase || ev.key === upperCase) {
-                    isKeyDown = false;
-                }
-            });
         }
     };
 }
