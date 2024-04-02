@@ -1,16 +1,15 @@
-import { ChartSequencer } from "../game_scene/chart/chartSequencer";
 import { FontSize } from "./fontSize";
 
 export module Common {
 
     export const createFloor = (scene: g.Scene): g.E => {
-        const layer = new g.E({ scene: scene });
+        const floor = new g.E({ scene: scene });
         const size = 80;
         for (let i = 0; i < 9; i++) {
             for (let j = 0; j < 16; j++) {
                 new g.FilledRect({
                     scene: scene,
-                    parent: layer,
+                    parent: floor,
                     width: size,
                     height: size,
                     cssColor: ((i + j) % 2 === 0) ? "#2a1010" : "#3a2020",
@@ -19,7 +18,7 @@ export module Common {
                 });
             }
         }
-        return layer;
+        return floor;
     };
 
     export const createNoteGuidePosTable = (bpm: number, radiusRate: number = 1): g.CommonOffset[] => {
