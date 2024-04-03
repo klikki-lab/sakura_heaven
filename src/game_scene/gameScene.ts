@@ -89,7 +89,8 @@ export class GameScene extends g.Scene {
         note.onClicked.addOnce(note => {
             const rating: Rating = withinTimingWindow(note.ticks);
             switch (rating) {
-                case Rating.PERFECT:
+                case Rating.PERFECT://606320
+                case Rating.SEMI_PERFECT://551200
                     this.bloomSakura(rating.scoreRate, note);
                     break;
                 case Rating.EXCELLENT:
@@ -100,16 +101,16 @@ export class GameScene extends g.Scene {
                     failed();
                     return;
             }
-            this.score.add(rating.scoreRate);
-            this.playSoundEffect(rating.audioId);
-            this.createRatings(note, rating);
+            result(rating);
         });
-        const failed = () => {
-            const rating = Rating.BAD;
-            this.score.add(rating.scoreRate);
+        const result = (rating: Rating) => {
+            this.score.add(rating);
             this.playSoundEffect(rating.audioId);
-            this.bloomLayer.append(new Dispersal(this, note));
             this.createRatings(note, rating);
+        };
+        const failed = () => {
+            this.bloomLayer.append(new Dispersal(this, note));
+            result(Rating.BAD);
         };
         this.notesLayer.append(note);
     };
@@ -201,7 +202,7 @@ export class GameScene extends g.Scene {
             const x = g.game.random.generate() * g.game.width * .7 + g.game.width * .15;
             const y = g.game.random.generate() * g.game.height * .7 + g.game.height * .15;
             const scoreRate = Math.floor(resultRate * 2 + 1);
-            const bloom = new BloomEffect(this, { x: x, y: y }, scoreRate);
+            const bloom = new BloomEffect(this, { x: x, y: y }, scoreRate, "img_sakura");
             this.bloomLayer.append(bloom);
         }
     };

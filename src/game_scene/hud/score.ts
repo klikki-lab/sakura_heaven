@@ -24,13 +24,17 @@ export class Score extends g.Label {
 
     get perfectCount(): number { return this._perfectCount; }
 
-    add = (scoreRate: number): number => {
-        if (scoreRate === Rating.PERFECT.scoreRate) {
+    add = (rating: Rating): number => {
+        let bonus = 0;
+        if (rating.scoreRate >= Rating.SEMI_PERFECT.scoreRate) {
             this._combo++;
             this._perfectCount++;
+            if (Rating.PERFECT === rating) {
+                bonus = 10;
+            }
         } else {
             this._combo = 0;
-            if (scoreRate === Rating.BAD.scoreRate) {
+            if (rating.scoreRate === Rating.BAD.scoreRate) {
                 return 0;
             }
         }
@@ -38,7 +42,7 @@ export class Score extends g.Label {
         this._maxCombo = Math.max(this._combo, this._maxCombo);
         this._bloomimg++;
 
-        const result = Score.SCORE * (1 << (scoreRate - 1)) * Math.max(1, this._combo);
+        const result = (Score.SCORE + bonus) * (1 << (rating.scoreRate - 1)) * Math.max(1, this._combo);
         g.game.vars.gameState.score += result;
         this.text = `SCORE ${g.game.vars.gameState.score}`;
         this.invalidate();

@@ -80,6 +80,7 @@ export class TitleScene extends g.Scene {
             const rating: Rating = withinTimingWindow(note.ticks);
             switch (rating) {
                 case Rating.PERFECT:
+                case Rating.SEMI_PERFECT:
                     this.bloomSakura(rating.scoreRate, note);
                     this.showMessage("リズムカンペキ！");
                     break;

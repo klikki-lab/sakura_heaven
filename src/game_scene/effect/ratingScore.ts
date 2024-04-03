@@ -8,7 +8,7 @@ type RatingProps = {
     readonly audioId: string,
 };
 
-type Rate = "BAD" | "GOOD" | "EXCELLENT" | "PERFECT";
+type Rate = "BAD" | "GOOD" | "EXCELLENT" | "SEMI_PERFECT" | "PERFECT";
 
 type RatingType = {
     [key in Rate]: RatingProps;
@@ -42,11 +42,20 @@ export const Rating: RatingType = {
         imageId: "img_excellent",
         audioId: "se_excellent",
     },
+    SEMI_PERFECT: {
+        scoreRate: 3,
+        timingWindow: {
+            min: -1,
+            max: 1,
+        },
+        imageId: "img_perfect",
+        audioId: "se_perfect",
+    },
     PERFECT: {
         scoreRate: 3,
         timingWindow: {
             min: 0,
-            max: 1,
+            max: 0,
         },
         imageId: "img_perfect",
         audioId: "se_perfect",
@@ -56,8 +65,10 @@ export const Rating: RatingType = {
 export type Rating = (typeof Rating)[keyof typeof Rating];
 
 export const withinTimingWindow = (frame: number): Rating => {
-    if (Rating.PERFECT.timingWindow.min <= frame && Rating.PERFECT.timingWindow.max >= frame) {
+    if (Rating.PERFECT.timingWindow.min === frame) {
         return Rating.PERFECT;
+    } else if (Rating.SEMI_PERFECT.timingWindow.min <= frame && Rating.SEMI_PERFECT.timingWindow.max >= frame) {
+        return Rating.SEMI_PERFECT;
     } else if (Rating.EXCELLENT.timingWindow.min <= frame && Rating.EXCELLENT.timingWindow.max >= frame) {
         return Rating.EXCELLENT;
     } else if (Rating.GOOD.timingWindow.min <= frame && Rating.GOOD.timingWindow.max >= frame) {

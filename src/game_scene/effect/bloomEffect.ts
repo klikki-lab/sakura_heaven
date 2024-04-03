@@ -8,14 +8,14 @@ export class BloomEffect extends g.E {
 
     private _petals: Petal[] = [];
 
-    constructor(scene: g.Scene, pos: g.CommonOffset, private scoreRate: number) {
+    constructor(scene: g.Scene, pos: g.CommonOffset, private scoreRate: number, assetId: string = "img_sakura_no_gradation") {
         super({ scene: scene, x: pos.x, y: pos.y });
 
         const count = scoreRate * 3;
         for (let i = 0; i < count; i++) {
             const angle = 2 * Math.PI * (i / count) - BloomEffect.OFFSET_ANGLE;
 
-            const petal = new Petal(scene, "img_sakura_no_gradation");
+            const petal = new Petal(scene, assetId);
 
             const radius = petal.height * 0.5;
             const x = Math.cos(angle) * radius;
