@@ -25,7 +25,7 @@ export class SakuraNote extends g.Sprite {
     }
 
     private updateHandler = (): void => {
-        if (!this._isJudged && this._ticks-- < Rating.BAD.timingWindow.min) {
+        if (!this._isJudged && this._ticks-- < Rating.FAILED.timingWindow.min) {
             this.onFailed.fire(this);
             this.onUpdate.remove(this.updateHandler);
             this.onUpdate.add(this.destroyHandler);

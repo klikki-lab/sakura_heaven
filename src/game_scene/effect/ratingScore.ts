@@ -8,13 +8,22 @@ type RatingProps = {
     readonly audioId: string,
 };
 
-type Rate = "BAD" | "GOOD" | "EXCELLENT" | "SEMI_PERFECT" | "PERFECT";
+type Rate = "FAILED" | "BAD" | "GOOD" | "EXCELLENT" | "SEMI_PERFECT" | "PERFECT";
 
 type RatingType = {
     [key in Rate]: RatingProps;
 }
 
 export const Rating: RatingType = {
+    FAILED: {
+        scoreRate: 0,
+        timingWindow: {
+            min: -15,
+            max: 15,
+        },
+        imageId: "",
+        audioId: "",
+    },
     BAD: {
         scoreRate: 0,
         timingWindow: {
