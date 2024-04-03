@@ -69,6 +69,8 @@ export class ChartSequencer {
         this.onFinish.fire();
     };
 
+    isStarted = (): boolean => this._ticks > 0;
+
     get bpm(): number { return this._bpm; }
 
     get ticks(): number { return this._ticks; }

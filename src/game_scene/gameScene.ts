@@ -32,7 +32,7 @@ export class GameScene extends g.Scene {
     private score: Score;
     private timer: CountdownTimer;
     private blackout: Blackout;
-    private waitMessage: g.Label;
+    private waitingMessage: g.Label;
     private keyEvent: KeyEvent;
 
     constructor(
@@ -59,7 +59,11 @@ export class GameScene extends g.Scene {
 
     private createSequencer = (charts: number[][], bpm: number, timeBase: number): ChartSequencer => {
         const sequencer = new ChartSequencer(charts, bpm, timeBase);
-        sequencer.onStart.add(_ => { /* do nothing */ });
+        sequencer.onStart.add(_ => {
+            if (this.params.isAlreadyClicked) {
+                this.timer.start();
+            }
+        });
         sequencer.onNote.add(_ => {
             this.playSoundEffect("se_spawn");
             this.createNote();
@@ -70,7 +74,7 @@ export class GameScene extends g.Scene {
                 this.onUpdate.add(() => this.effectLayer.append(new PetalEffect(this, this.guide)));
                 this.onPointDownCapture.add(addClickListner);
                 this.keyEvent?.onKeyDown.add(addClickListner);
-            }, 500);
+            }, 750);
             if (this.onPointDownCapture.contains(this.waitClickListener)) {
                 this.onPointDownCapture.remove(this.waitClickListener);
             }
@@ -164,9 +168,12 @@ export class GameScene extends g.Scene {
         this.score = new Score(this, this.font);
         this.hudLayer.append(this.score);
 
-        this.timer = new CountdownTimer(this, this.font, this._timeLimit);
+        const timeLimit = this._timeLimit - (this.params.isAlreadyClicked ? 5 : 0);
+        this.timer = new CountdownTimer(this, this.font, timeLimit);
         this.timer.onFinish.add(() => { /* do nothing */ });
-        this.timer.start();
+        if (!this.params.isAlreadyClicked) {
+            this.timer.start();
+        }
         this.hudLayer.append(this.timer);
     };
 
@@ -186,11 +193,11 @@ export class GameScene extends g.Scene {
             this.hudLayer.append(rank);
         }
 
-        if (!this.blackout?.destroyed()) {
-            this.blackout?.destroy();
+        if (this.blackout && !this.blackout.destroyed()) {
+            this.blackout.destroy();
         }
-        if (!this.waitMessage?.destroyed()) {
-            this.waitMessage?.destroy();
+        if (this.waitingMessage && !this.waitingMessage.destroyed()) {
+            this.waitingMessage.destroy();
         }
     };
 
@@ -317,18 +324,18 @@ export class GameScene extends g.Scene {
 
     private waitScreenClick = (player: g.AudioPlayer, asset: g.AudioAsset) => {
         this.onPointDownCapture.add(this.waitClickListener);
-        this.waitMessage = this.createLabel(Common.createDynamicFont(), "画面をクリックしてスタート！");
-        this.waitMessage.x = g.game.width / 2;
-        this.waitMessage.y = g.game.height / 2;
+        this.waitingMessage = this.createLabel(Common.createDynamicFont(), "画面をクリックしてスタート！");
+        this.waitingMessage.x = g.game.width / 2;
+        this.waitingMessage.y = g.game.height / 2;
 
         this.blackout = new Blackout(this);
         this.blackout.onStartGame.add(_ => {
-            this.waitMessage.destroy();
+            this.waitingMessage.destroy();
             this.onPointDownCapture.remove(this.waitClickListener);
             player.play(asset);
         });
         this.hudLayer.append(this.blackout);
-        this.hudLayer.append(this.waitMessage);
+        this.hudLayer.append(this.waitingMessage);
     };
 
     private waitClickListener = (): void => { this.blackout.close(); };
