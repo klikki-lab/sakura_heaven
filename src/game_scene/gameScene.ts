@@ -222,17 +222,17 @@ export class GameScene extends g.Scene {
         if (resultRate >= 1.0) {
             rank = "SSS";
             msg = "パーフェクト！";
-        } else if (resultRate >= 0.95) {
+        } else if (resultRate >= 0.98) {
             rank = "SS";
             msg = "超絶満開！";
-        } else if (resultRate >= 0.90) {
+        } else if (resultRate >= 0.95) {
             rank = "S";
             msg = "超満開！";
-        } else if (resultRate >= 0.80) {
+        } else if (resultRate >= 0.90) {
             rank = "A";
             msg = "満開！さらに上を目指そう！";
         } else {
-            const rate = resultRate / 0.80;
+            const rate = resultRate / 0.90;
             if (rate >= 0.7) {
                 rank = "B";
                 msg = `${Math.floor(rate * 10)}分咲き`;
