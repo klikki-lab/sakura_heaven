@@ -2,17 +2,23 @@ import { FontSize } from "./fontSize";
 
 export module Common {
 
-    export const createFloor = (scene: g.Scene): g.E => {
-        const floor = new g.E({ scene: scene });
+    export const createFloor = (scene: g.Scene): g.FilledRect => {
+        const floor = new g.FilledRect({
+            scene: scene,
+            width: g.game.width,
+            height: g.game.height,
+            cssColor: "#2a1010",
+        });
         const size = 80;
         for (let i = 0; i < 9; i++) {
             for (let j = 0; j < 16; j++) {
+                if ((i + j) % 2 === 0) continue;
                 new g.FilledRect({
                     scene: scene,
                     parent: floor,
                     width: size,
                     height: size,
-                    cssColor: ((i + j) % 2 === 0) ? "#2a1010" : "#3a2020",
+                    cssColor: "#3a2020",
                     x: j * size,
                     y: i * size,
                 });
