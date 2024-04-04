@@ -1,3 +1,5 @@
+import { Velocity } from "../../common/velocity";
+
 export class Petal extends g.Sprite {
 
     velocity: Velocity = { x: 0, y: 0 };
