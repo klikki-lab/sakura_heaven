@@ -122,11 +122,6 @@
 			"width": 40,
 			"height": 64
 		},
-		"arrayUtil": {
-			"type": "script",
-			"path": "script/common/arrayUtil.js",
-			"global": true
-		},
 		"entity": {
 			"type": "script",
 			"path": "script/common/entity.js",

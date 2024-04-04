@@ -12,7 +12,6 @@ import { SakuraNote } from "./sakura/sakuraNote";
 import { NoteGuide } from "./sakura/noteGuide";
 import { BloomEffect } from "./effect/bloomEffect";
 import { StartLabel } from "./startLabel";
-import { ArrayUtil } from "../common/arrayUtil";
 import { TitleSceneParams } from "../title_scene/titleScene";
 import { Common } from "../common/common";
 import { Blackout } from "./blackout";
@@ -262,7 +261,7 @@ export class GameScene extends g.Scene {
     };
 
     private calcResultRate = (): number => {
-        const allNoteCount = ArrayUtil.extractOneCount(this.sequencer.charts);
+        const allNoteCount = Chart.extractNoteCount(this.sequencer.charts);
         const bloomingRate = (this.score.blooming / allNoteCount) * 0.6;
         const perfectRate = (this.score.perfectCount / allNoteCount) * 0.4;
         // const comboRate = (this.score.maxCombo / allNoteCount) * 0.4;

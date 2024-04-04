@@ -102,5 +102,15 @@ export module Chart {
     //     [0, 0, 0, 0, 0, 0, 1, 1],
     //     [0, 0, 0, 0, 0, 0, 0, State.EOC],
     // ] as const;
+
+    export const extractNoteCount = (arr: number[][]): number => {
+        let count = 0;
+        arr.forEach(arr => {
+            arr.forEach(num => {
+                if (Chart.State.NOTE === num) count++;
+            });
+        });
+        return count;
+    };
 };
 
