@@ -16,8 +16,8 @@ export function main(param: GameMainParameterObject): void {
     g.game.loadingScene = new CustomLoadingScene();
 
     const titleScene = new TitleScene(param, 10, 0.5);
-    titleScene.onFinish.add(params => {
-        g.game.replaceScene(new GameScene(param, 70, params));
+    titleScene.onFinish.add(props => {
+        g.game.replaceScene(new GameScene(param, 70, props));
     });
     g.game.pushScene(titleScene);
 }

@@ -7,7 +7,7 @@ export interface RadioButtonParams {
 
 export class VerticalRadioButton extends g.E {
 
-    private static readonly UNSELECTED_COLOR = "black";
+    private static readonly UNSELECTED_COLOR = "#422";
 
     onClicked: g.Trigger<VerticalRadioButton> = new g.Trigger();
 
@@ -28,8 +28,7 @@ export class VerticalRadioButton extends g.E {
             button.setColor(prop.selected ? Button.DEFAULT_COLOR : VerticalRadioButton.UNSELECTED_COLOR);
             if (index > 0) {
                 const offsetX = this.buttons[index - 1].x + this.buttons[index - 1].width / 2 + button.width / 2;
-                const margin = Button.BORDER_WIDTH / 2;
-                button.x = offsetX - margin;
+                button.x = offsetX - button.getMargin();
             }
             button.onClickDown.add(clickedButton => {
                 this.buttons.forEach(button => {

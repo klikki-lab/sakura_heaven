@@ -1,7 +1,6 @@
 export class Button extends g.FilledRect {
 
     static readonly DEFAULT_COLOR = "#ffaaaa";
-    static readonly BORDER_WIDTH = 8;
     private static readonly SCALE_RATE = .9;
 
     onClickDown: g.Trigger<Button> = new g.Trigger();
@@ -35,8 +34,8 @@ export class Button extends g.FilledRect {
         this._rect = new g.FilledRect({
             scene: scene,
             parent: this,
-            width: this.width - Button.BORDER_WIDTH,
-            height: this.height - Button.BORDER_WIDTH,
+            width: this.width - font.size * .25,
+            height: this.height - font.size * .25,
             cssColor: color,
             anchorX: 0.5,
             anchorY: 0.5,
@@ -82,6 +81,8 @@ export class Button extends g.FilledRect {
         this._rect.cssColor = color;
         this._rect.modified();
     };
+
+    getMargin = (): number => (this.width - this._rect.width) / 2;
 
     isNormalColor = (): boolean => this._rect.cssColor === Button.DEFAULT_COLOR;
 

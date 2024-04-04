@@ -16,7 +16,7 @@ import { Button } from "../common/button";
 import { KeyEvent } from "../common/keyEvent";
 import { VerticalRadioButton } from "../common/verticalRadioButton";
 
-export interface GameSettings {
+export interface GameProps {
     isAlreadyClicked: boolean;
     musicVolume: number;
     soundVolume: number;
@@ -26,7 +26,7 @@ export class TitleScene extends g.Scene {
 
     private static readonly SE_VOLUME_RATE = 0.75;
 
-    onFinish: g.Trigger<GameSettings> = new g.Trigger();
+    onFinish: g.Trigger<GameProps> = new g.Trigger();
 
     private sequencer: ChartSequencer;
     private posTable: g.CommonOffset[] = [];
@@ -205,10 +205,10 @@ export class TitleScene extends g.Scene {
         this.radioButton.y = volume.y;
         this.radioButton.modified();
         this.radioButton.onClicked.add(_button => {
+            this._volume = this.getVolume();
             if (!this.isButtonClicked) {
                 this.isButtonClicked = true;
             }
-            this._volume = this.getVolume();
             this.playSE("se_good");
         });
         this.append(this.radioButton);
@@ -222,7 +222,7 @@ export class TitleScene extends g.Scene {
         this.onPointDownCapture.add(this.clickListener);
     };
 
-    private getVolume = (): number => this.radioButton.getSelectedIndex() * 0.25 + 0.25;
+    private getVolume = (): number => this.radioButton.getSelectedIndex() * 0.3 + 0.2;
 
     private finishScene = (isClicked: boolean): void => {
         if (!this.isFinished) {

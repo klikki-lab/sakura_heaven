@@ -11,7 +11,7 @@ import { Bloom } from "./sakura/bloom";
 import { SakuraNote } from "./sakura/sakuraNote";
 import { NoteGuide } from "./sakura/noteGuide";
 import { BloomEffect } from "./effect/bloomEffect";
-import { GameSettings } from "../title_scene/titleScene";
+import { GameProps } from "../title_scene/titleScene";
 import { Common } from "../common/common";
 import { Blackout } from "./blackout";
 import { KeyEvent } from "../common/keyEvent";
@@ -37,7 +37,7 @@ export class GameScene extends g.Scene {
     constructor(
         _param: GameMainParameterObject,
         private timeLimit: number,
-        private settings: GameSettings) {
+        private props: GameProps) {
 
         super({
             game: g.game,
@@ -58,7 +58,7 @@ export class GameScene extends g.Scene {
     private createSequencer = (charts: number[][], bpm: number, timeBase: number): ChartSequencer => {
         const sequencer = new ChartSequencer(charts, bpm, timeBase);
         sequencer.onStart.add(_ => {
-            if (this.settings.isAlreadyClicked) {
+            if (this.props.isAlreadyClicked) {
                 this.timer.start();
             }
         });
@@ -166,10 +166,10 @@ export class GameScene extends g.Scene {
         this.score = new Score(this, this.font);
         this.hudLayer.append(this.score);
 
-        const timeLimit = this.timeLimit - (this.settings.isAlreadyClicked ? 5 : 0);
+        const timeLimit = this.timeLimit - (this.props.isAlreadyClicked ? 5 : 0);
         this.timer = new CountdownTimer(this, this.font, timeLimit);
         this.timer.onFinish.add(() => { /* do nothing */ });
-        if (!this.settings.isAlreadyClicked) {
+        if (!this.props.isAlreadyClicked) {
             this.timer.start();
         }
         this.hudLayer.append(this.timer);
@@ -285,7 +285,7 @@ export class GameScene extends g.Scene {
     });
 
     private playSoundEffect = (assetId: string): void => {
-        this.asset.getAudioById(assetId).play().changeVolume(this.settings.soundVolume);
+        this.asset.getAudioById(assetId).play().changeVolume(this.props.soundVolume);
     };
 
     private createAudioPlayer = (startLabel: BeatLabel): void => {
@@ -293,7 +293,7 @@ export class GameScene extends g.Scene {
         const audioPlayer = new g.MusicAudioSystem({
             id: audiAsset.id,
             resourceFactory: g.game.resourceFactory,
-            volume: this.settings.musicVolume,
+            volume: this.props.musicVolume,
         }).createPlayer();
 
         audioPlayer.onPlay.add((_ev: g.AudioPlayerEvent) => {
@@ -310,7 +310,7 @@ export class GameScene extends g.Scene {
         });
         audioPlayer.onStop.add((ev: g.AudioPlayerEvent) => ev.player.stop());
 
-        if (this.settings.isAlreadyClicked) {
+        if (this.props.isAlreadyClicked) {
             audioPlayer.play(audiAsset);
         } else {
             startLabel.hide();
