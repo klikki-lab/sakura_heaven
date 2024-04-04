@@ -20,7 +20,7 @@ export class Score extends g.Label {
 
     get blooming(): number { return this._bloomimg; }
 
-    get maxCombo(): number { return this._maxCombo - 1; }
+    get maxCombo(): number { return this._maxCombo; }
 
     get perfectCount(): number { return this._perfectCount; }
 

@@ -91,8 +91,8 @@ export class GameScene extends g.Scene {
         note.onClicked.addOnce(note => {
             const rating: Rating = withinTimingWindow(note.ticks);
             switch (rating) {
-                case Rating.PERFECT://606320
-                case Rating.SEMI_PERFECT://551200
+                case Rating.PERFECT:
+                case Rating.SEMI_PERFECT:
                     this.bloomSakura(rating.scoreRate, note);
                     break;
                 case Rating.EXCELLENT:
@@ -181,10 +181,22 @@ export class GameScene extends g.Scene {
         this.hudLayer.append(gameOver);
         this.createCopyright(this.font);
 
-        this.setTimeout(() => this.onUpdate.add(this.gameOverUpdateHandler), 1000);
+        const resultRate = this.calcResultRate();
+        const gameOverUpdateHandler = (): void => {
+            if (g.game.age % 5 === 0) {
+                if (g.game.random.generate() <= 1 - resultRate) return;
+
+                const x = g.game.random.generate() * g.game.width * .7 + g.game.width * .15;
+                const y = g.game.random.generate() * g.game.height * .7 + g.game.height * .15;
+                const scoreRate = Math.floor(resultRate * 2 + 1);
+                const bloom = new BloomEffect(this, { x: x, y: y }, scoreRate, "img_sakura");
+                this.bloomLayer.append(bloom);
+            }
+        };
+        this.setTimeout(() => this.onUpdate.add(gameOverUpdateHandler), 1000);
 
         if (!this.blackout || (this.blackout && this.blackout.destroyed())) {
-            const rank = this.createRank(this.font);
+            const rank = this.createRank(this.font, resultRate);
             rank.x = gameOver.x;
             rank.y = gameOver.y + gameOver.height * 2;
             this.hudLayer.append(rank);
@@ -198,19 +210,6 @@ export class GameScene extends g.Scene {
         }
     };
 
-    private gameOverUpdateHandler = (): void => {
-        if (g.game.age % 5 === 0) {
-            const resultRate = this.calcResultRate();
-            if (g.game.random.generate() <= 1 - resultRate) return;
-
-            const x = g.game.random.generate() * g.game.width * .7 + g.game.width * .15;
-            const y = g.game.random.generate() * g.game.height * .7 + g.game.height * .15;
-            const scoreRate = Math.floor(resultRate * 2 + 1);
-            const bloom = new BloomEffect(this, { x: x, y: y }, scoreRate, "img_sakura");
-            this.bloomLayer.append(bloom);
-        }
-    };
-
     private createCopyright = (font: g.DynamicFont) => {
         const text = "曲: ほんじつもうちょうてんなり (C)PANICPUMPKIN";
         const copyright = this.createLabel(font, text, FontSize.SMALL);
@@ -219,24 +218,23 @@ export class GameScene extends g.Scene {
         this.hudLayer.append(copyright);
     };
 
-    private createRank = (font: g.DynamicFont): g.Label => {
-        const resultRate = this.calcResultRate();
+    private createRank = (font: g.DynamicFont, resultRate: number): g.Label => {
         let rank = "";
         let msg = "";
         if (resultRate >= 1.0) {
             rank = "SSS";
             msg = "パーフェクト！";
-        } else if (resultRate >= 0.98) {
+        } else if (resultRate >= 0.95) {
             rank = "SS";
             msg = "超絶満開！";
-        } else if (resultRate >= 0.95) {
+        } else if (resultRate >= 0.90) {
             rank = "S";
             msg = "超満開！";
-        } else if (resultRate >= 0.90) {
+        } else if (resultRate >= 0.80) {
             rank = "A";
             msg = "満開！さらに上を目指そう！";
         } else {
-            const rate = resultRate / 0.90;
+            const rate = resultRate / 0.80;
             if (rate >= 0.7) {
                 rank = "B";
                 msg = `${Math.floor(rate * 10)}分咲き`;
@@ -262,18 +260,15 @@ export class GameScene extends g.Scene {
     private calcResultRate = (): number => {
         const allNoteCount = Chart.extractNoteCount(this.sequencer.charts);
         const bloomingRate = (this.score.blooming / allNoteCount) * 0.6;
-        const perfectRate = (this.score.perfectCount / allNoteCount) * 0.4;
-        // const comboRate = (this.score.maxCombo / allNoteCount) * 0.4;
-        //const resultRate = bloomingRate + comboRate;
-        const resultRate = bloomingRate + perfectRate;
-
+        const perfectRate = (this.score.perfectCount / allNoteCount) * 0.3;
+        const comboRate = (this.score.maxCombo / allNoteCount) * 0.1;
+        const resultRate = bloomingRate + perfectRate + comboRate;
         // console.log(
-        //     "max combo = ", this.score.maxCombo,
-        //     " ,blooming = ", this.score.blooming,
+        //     " blooming = ", this.score.blooming,
+        //     " ,max combo = ", this.score.maxCombo,
         //     " ,allNoteCount = ", allNoteCount,
-        //     " ,perfectCount = ", this.score.perfectCount,
-        //     " ,perfectRate = ", perfectRate,
         //     " ,bloomingRate = ", bloomingRate,
+        //     " ,perfectRate = ", perfectRate,
         //     " ,comboRate = ", comboRate,
         //     " ,resultRate = ", resultRate);
         return resultRate;

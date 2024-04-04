@@ -42,7 +42,7 @@ export const Rating: RatingType = {
         imageId: "img_good",
         audioId: "se_good",
     },
-    EXCELLENT: {
+    EXCELLENT: {// max score 10600
         scoreRate: 2,
         timingWindow: {
             min: -2,
@@ -51,7 +51,7 @@ export const Rating: RatingType = {
         imageId: "img_excellent",
         audioId: "se_excellent",
     },
-    SEMI_PERFECT: {
+    SEMI_PERFECT: {// max score 572400
         scoreRate: 3,
         timingWindow: {
             min: -1,
@@ -60,7 +60,7 @@ export const Rating: RatingType = {
         imageId: "img_perfect",
         audioId: "se_perfect",
     },
-    PERFECT: {
+    PERFECT: {// max score 629640
         scoreRate: 3,
         timingWindow: {
             min: 0,
