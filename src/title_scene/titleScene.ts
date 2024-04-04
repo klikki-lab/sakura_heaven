@@ -1,7 +1,7 @@
 import { FontSize } from "../common/fontSize";
 import { GameMainParameterObject } from "../parameterObject";
 import { TitleSceneTimer } from "./titleSceneTimer";
-import { TitleLabel } from "./title";
+import { TitleLabel } from "./titleLabel";
 import { NoteGuide } from "../game_scene/sakura/noteGuide";
 import { ChartSequencer } from "../game_scene/chart/chartSequencer";
 import { Chart } from "../game_scene/chart/chart";
@@ -12,7 +12,7 @@ import { Dispersal } from "../game_scene/sakura/dispersal";
 import { Rating, withinTimingWindow } from "../game_scene/effect/ratingScore";
 import { BloomEffect } from "../game_scene/effect/bloomEffect";
 import { Bloom } from "../game_scene/sakura/bloom";
-import { Button } from "./button";
+import { Button } from "../common/button";
 import { KeyEvent } from "../common/keyEvent";
 
 export interface TitleSceneParams {
@@ -37,6 +37,7 @@ export class TitleScene extends g.Scene {
 
     private isButtonClicked: boolean = false;
     private isClicked: boolean = false;
+    private isFinished: boolean = false;
 
     constructor(_param: GameMainParameterObject, private _timeLimit: number) {
         super({
@@ -159,6 +160,9 @@ export class TitleScene extends g.Scene {
         this.messageLabel = this.createMessageLabel(font);
         this.append(this.messageLabel);
 
+        const timer = this.createCountdownTimer(font);
+        this.append(timer);
+
         const buttonFont = Common.createDynamicFont(FontSize.MEDIUM, "sans-serif", "white");
         this.startButton = new Button(this, buttonFont, "今すぐはじめる");
         this.startButton.x = g.game.width - this.startButton.width * 0.75;
@@ -168,11 +172,11 @@ export class TitleScene extends g.Scene {
             this.isButtonClicked = true;
             this.playSE("se_good");
         });
-        this.startButton.onClicked.add(_button => this.finishTitleScene(true));
+        this.startButton.onClicked.add(_button => {
+            timer.stop();
+            this.setTimeout(() => this.finishScene(true), 100);
+        });
         this.append(this.startButton);
-
-        const timer = this.createCountdownTimer(font);
-        this.append(timer);
 
         this.guide = new NoteGuide(this, this.posTable[0]);
         this.append(this.guide);
@@ -187,9 +191,12 @@ export class TitleScene extends g.Scene {
         });
     };
 
-    private finishTitleScene = (isClicked: boolean): void => {
-        this.keyEvent?.removeListener();
-        this.onFinish.fire({ isAlreadyClicked: isClicked });
+    private finishScene = (isClicked: boolean): void => {
+        if (!this.isFinished) {
+            this.isFinished = true;
+            this.keyEvent?.removeListener();
+            this.onFinish.fire({ isAlreadyClicked: isClicked });
+        }
     };
 
     private createMessageLabel = (font: g.DynamicFont): g.Label => {
@@ -216,7 +223,7 @@ export class TitleScene extends g.Scene {
 
     private createCountdownTimer = (font: g.DynamicFont): TitleSceneTimer => {
         const timer = new TitleSceneTimer(this, font, this._timeLimit);
-        timer.onFinish.addOnce(() => this.finishTitleScene(this.isClicked || this.isButtonClicked));
+        timer.onFinish.addOnce(() => this.finishScene(this.isClicked || this.isButtonClicked));
         timer.start();
         return timer;
     };

@@ -122,11 +122,6 @@
 			"width": 40,
 			"height": 64
 		},
-		"entity": {
-			"type": "script",
-			"path": "script/common/entity.js",
-			"global": true
-		},
 		"fontSize": {
 			"type": "script",
 			"path": "script/common/fontSize.js",
@@ -236,9 +231,9 @@
 			"path": "script/title_scene/titleScene.js",
 			"global": true
 		},
-		"title": {
+		"titleLabel": {
 			"type": "script",
-			"path": "script/title_scene/title.js",
+			"path": "script/title_scene/titleLabel.js",
 			"global": true
 		},
 		"titleSceneTimer": {
@@ -249,11 +244,6 @@
 		"common": {
 			"type": "script",
 			"path": "script/common/common.js",
-			"global": true
-		},
-		"button": {
-			"type": "script",
-			"path": "script/title_scene/button.js",
 			"global": true
 		},
 		"blackout": {
@@ -269,6 +259,11 @@
 		"keyEvent": {
 			"type": "script",
 			"path": "script/common/keyEvent.js",
+			"global": true
+		},
+		"button": {
+			"type": "script",
+			"path": "script/common/button.js",
 			"global": true
 		}
 	},

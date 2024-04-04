@@ -1,7 +1,7 @@
 export class Button extends g.FilledRect {
 
     private static readonly DEFAULT_COLOR = "#ffaaaa";
-    private static readonly SCALE_UP_RATE = 1.1;
+    private static readonly SCALE_RATE = .9;
 
     onClickDown: g.Trigger<Button> = new g.Trigger();
     onClicked: g.Trigger<Button> = new g.Trigger();
@@ -41,7 +41,7 @@ export class Button extends g.FilledRect {
 
         this.onPointDown.add(_ev => {
             this.isClick = true;
-            setScale(Button.SCALE_UP_RATE);
+            setScale(Button.SCALE_RATE);
             this.onClickDown.fire(this);
         });
 
@@ -49,7 +49,7 @@ export class Button extends g.FilledRect {
             const ex = ev.point.x + ev.startDelta.x;
             const ey = ev.point.y + ev.startDelta.y;
             this.isClick = this.isClick && 0 <= ex && this.width >= ex && 0 <= ey && this.height >= ey;
-            setScale(this.isClick ? Button.SCALE_UP_RATE : 1.0);
+            setScale(this.isClick ? Button.SCALE_RATE : 1.0);
         });
 
         this.onPointUp.add(_ev => {

@@ -3,11 +3,12 @@ export class TitleSceneTimer extends g.Label {
     private static readonly SPACE = "  ";
 
     onFinish: g.Trigger<void> = new g.Trigger();
+    private isStop: boolean = false;
 
     constructor(scene: g.Scene, font: g.DynamicFont, private remainingSec: number) {
         super({
             scene: scene,
-            text: `開始まで ${remainingSec} 秒`,
+            text: `開始まで${remainingSec} 秒`,
             font: font,
             anchorX: .5,
             anchorY: .5,
@@ -21,8 +22,12 @@ export class TitleSceneTimer extends g.Label {
 
     start = (): void => { this.onUpdate.add(this.updateHandler); };
 
-    private spacePadding = (sec: string): string => (
-        TitleSceneTimer.SPACE + sec).slice(-TitleSceneTimer.SPACE.length);
+    stop = () => {
+        this.isStop = true;
+        if (this.onUpdate.contains(this.updateHandler)) {
+            this.onUpdate.remove(this.updateHandler);
+        }
+    }
 
     private updateHandler = (): void => {
         this.remainingSec -= 1 / g.game.fps;
@@ -32,7 +37,7 @@ export class TitleSceneTimer extends g.Label {
             this.text = text;
             this.invalidate();
 
-            if (sec < 0) {
+            if (sec < 0 && !this.isStop) {
                 this.onFinish.fire();
                 this.onUpdate.destroy();
             }
