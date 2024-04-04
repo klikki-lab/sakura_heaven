@@ -24,6 +24,7 @@ export interface GameProps {
 
 export class TitleScene extends g.Scene {
 
+    private static readonly MIN_VOLUME = 0.2;
     private static readonly SE_VOLUME_RATE = 0.75;
 
     onFinish: g.Trigger<GameProps> = new g.Trigger();
@@ -222,7 +223,8 @@ export class TitleScene extends g.Scene {
         this.onPointDownCapture.add(this.clickListener);
     };
 
-    private getVolume = (): number => this.radioButton.getSelectedIndex() * 0.3 + 0.2;
+    private getVolume = (): number =>
+        Math.max(this.radioButton.getSelectedIndex() * 0.3 + TitleScene.MIN_VOLUME, TitleScene.MIN_VOLUME);
 
     private finishScene = (isClicked: boolean): void => {
         if (!this.isFinished) {
