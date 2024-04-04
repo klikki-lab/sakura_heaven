@@ -1,7 +1,7 @@
 import { FontSize } from "../common/fontSize";
 import { GameMainParameterObject } from "../parameterObject";
 import { TitleSceneTimer } from "./titleSceneTimer";
-import { TitleLabel } from "./titleLabel";
+import { BeatLabel } from "../common/beatLabel";
 import { NoteGuide } from "../game_scene/sakura/noteGuide";
 import { ChartSequencer } from "../game_scene/chart/chartSequencer";
 import { Chart } from "../game_scene/chart/chart";
@@ -31,7 +31,7 @@ export class TitleScene extends g.Scene {
     private sequencer: ChartSequencer;
     private posTable: g.CommonOffset[] = [];
     private guide: NoteGuide;
-    private titleLabel: TitleLabel;
+    private titleLabel: BeatLabel;
     private messageLabel: g.Label;
     private timingLabel: g.Label;
     private startButton: Button;
@@ -153,7 +153,9 @@ export class TitleScene extends g.Scene {
         this.notesLayer = new g.E({ scene: this, parent: this, });
         this.bloomLayer = new g.E({ scene: this, parent: this, });
 
-        this.titleLabel = new TitleLabel(this, Common.createDynamicFont(FontSize.XL));
+        this.titleLabel = new BeatLabel(this, Common.createDynamicFont(FontSize.XL), "SAKURA HEAVEN");
+        this.titleLabel.x = g.game.width / 2;
+        this.titleLabel.y = this.titleLabel.height * 1.5;
         this.titleLabel.start(60);
         this.append(this.titleLabel);
 

@@ -11,11 +11,11 @@ import { Bloom } from "./sakura/bloom";
 import { SakuraNote } from "./sakura/sakuraNote";
 import { NoteGuide } from "./sakura/noteGuide";
 import { BloomEffect } from "./effect/bloomEffect";
-import { StartLabel } from "./startLabel";
 import { GameSettings } from "../title_scene/titleScene";
 import { Common } from "../common/common";
 import { Blackout } from "./blackout";
 import { KeyEvent } from "../common/keyEvent";
+import { BeatLabel } from "../common/beatLabel";
 
 export class GameScene extends g.Scene {
 
@@ -154,7 +154,8 @@ export class GameScene extends g.Scene {
         this.font = Common.createDynamicFont();
         this.createHudLayer();
 
-        const startLabel = new StartLabel(this, this.font);
+        const startLabel = new BeatLabel(this, this.font, "スタート！");
+        startLabel.moveTo(g.game.width / 2, g.game.height / 2);
         this.hudLayer.append(startLabel);
         this.createAudioPlayer(startLabel);
     };
@@ -175,9 +176,9 @@ export class GameScene extends g.Scene {
     };
 
     private gameOver = (): void => {
-        const gameOver = this.createLabel(this.font, "おわり");
-        gameOver.x = g.game.width / 2;
-        gameOver.y = g.game.height / 2;
+        const gameOver = new BeatLabel(this, this.font, "おわり", this.sequencer.ticks);
+        gameOver.moveTo(g.game.width / 2, g.game.height / 2);
+        gameOver.start(this.sequencer.bpm / 2);
         this.hudLayer.append(gameOver);
         this.createCopyright(this.font);
 
@@ -287,7 +288,7 @@ export class GameScene extends g.Scene {
         this.asset.getAudioById(assetId).play().changeVolume(this.settings.soundVolume);
     };
 
-    private createAudioPlayer = (startLabel: StartLabel): void => {
+    private createAudioPlayer = (startLabel: BeatLabel): void => {
         const audiAsset = this.asset.getAudioById("bgm_honjitsumouchoutennnari");
         const audioPlayer = new g.MusicAudioSystem({
             id: audiAsset.id,
@@ -298,6 +299,7 @@ export class GameScene extends g.Scene {
         audioPlayer.onPlay.add((_ev: g.AudioPlayerEvent) => {
             startLabel.show();
             startLabel.start(this.sequencer.bpm / 2);
+            this.setTimeout(() => startLabel.destroy(), 1000 * 4);
 
             this.onUpdate.add(this.updateHandler);
 

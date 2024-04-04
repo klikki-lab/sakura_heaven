@@ -211,11 +211,6 @@
 			"width": 127,
 			"height": 121
 		},
-		"startLabel": {
-			"type": "script",
-			"path": "script/game_scene/startLabel.js",
-			"global": true
-		},
 		"sakuraNote": {
 			"type": "script",
 			"path": "script/game_scene/sakura/sakuraNote.js",
@@ -229,11 +224,6 @@
 		"titleScene": {
 			"type": "script",
 			"path": "script/title_scene/titleScene.js",
-			"global": true
-		},
-		"titleLabel": {
-			"type": "script",
-			"path": "script/title_scene/titleLabel.js",
 			"global": true
 		},
 		"titleSceneTimer": {
@@ -269,6 +259,11 @@
 		"verticalRadioButton": {
 			"type": "script",
 			"path": "script/common/verticalRadioButton.js",
+			"global": true
+		},
+		"beatLabel": {
+			"type": "script",
+			"path": "script/common/beatLabel.js",
 			"global": true
 		}
 	},
