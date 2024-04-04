@@ -265,6 +265,11 @@
 			"type": "script",
 			"path": "script/common/button.js",
 			"global": true
+		},
+		"verticalRadioButton": {
+			"type": "script",
+			"path": "script/common/verticalRadioButton.js",
+			"global": true
 		}
 	},
 	"moduleMainScripts": {},

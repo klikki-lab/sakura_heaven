@@ -11,14 +11,13 @@ export function main(param: GameMainParameterObject): void {
         playThreshold: 100,
         clearThreshold: undefined,
     };
-    g.game.audio.music.volume = 0.5;
-    g.game.audio.sound.volume = 0.25;
-
+    // g.game.audio.music.volume = 0.5;
+    // g.game.audio.sound.volume = 0.25;
     g.game.loadingScene = new CustomLoadingScene();
 
-    const titleScene = new TitleScene(param, 10);
+    const titleScene = new TitleScene(param, 10, 0.5);
     titleScene.onFinish.add(params => {
-        g.game.replaceScene(new GameScene(param, 70, g.game.audio.music.volume, params));
+        g.game.replaceScene(new GameScene(param, 70, params));
     });
     g.game.pushScene(titleScene);
 }

@@ -14,7 +14,7 @@ export class TitleSceneTimer extends g.Label {
             anchorY: .5,
         });
         this.x = g.game.width / 2;
-        this.y = g.game.height - this.height * 1.5;
+        this.y = g.game.height - this.height * 2;
         this.modified();
     }
 

@@ -14,14 +14,19 @@ import { BloomEffect } from "../game_scene/effect/bloomEffect";
 import { Bloom } from "../game_scene/sakura/bloom";
 import { Button } from "../common/button";
 import { KeyEvent } from "../common/keyEvent";
+import { VerticalRadioButton } from "../common/verticalRadioButton";
 
-export interface TitleSceneParams {
+export interface GameSettings {
     isAlreadyClicked: boolean;
+    musicVolume: number;
+    soundVolume: number;
 }
 
 export class TitleScene extends g.Scene {
 
-    onFinish: g.Trigger<TitleSceneParams> = new g.Trigger();
+    private static readonly SE_VOLUME_RATE = 0.75;
+
+    onFinish: g.Trigger<GameSettings> = new g.Trigger();
 
     private sequencer: ChartSequencer;
     private posTable: g.CommonOffset[] = [];
@@ -30,6 +35,7 @@ export class TitleScene extends g.Scene {
     private messageLabel: g.Label;
     private timingLabel: g.Label;
     private startButton: Button;
+    private radioButton: VerticalRadioButton;
     private effectLayer: g.E;
     private notesLayer: g.E;
     private bloomLayer: g.E;
@@ -39,7 +45,7 @@ export class TitleScene extends g.Scene {
     private isClicked: boolean = false;
     private isFinished: boolean = false;
 
-    constructor(_param: GameMainParameterObject, private _timeLimit: number) {
+    constructor(_param: GameMainParameterObject, private _timeLimit: number, private _volume: number) {
         super({
             game: g.game,
             assetIds: [
@@ -102,14 +108,13 @@ export class TitleScene extends g.Scene {
         this.notesLayer.append(note);
 
         const failed = (): void => {
-            // this.playSE("se_bad"); 
             this.bloomLayer.append(new Dispersal(this, note));
         };
     };
 
     private playSE = (assetId: string): void => {
         if (this.isClicked || this.isButtonClicked) {
-            this.asset.getAudioById(assetId).play();
+            this.asset.getAudioById(assetId).play().changeVolume(this._volume * TitleScene.SE_VOLUME_RATE);
         }
     };
 
@@ -165,8 +170,8 @@ export class TitleScene extends g.Scene {
 
         const buttonFont = Common.createDynamicFont(FontSize.MEDIUM, "sans-serif", "white");
         this.startButton = new Button(this, buttonFont, "今すぐはじめる");
-        this.startButton.x = g.game.width - this.startButton.width * 0.75;
-        this.startButton.y = g.game.height - this.startButton.height * 0.75;
+        this.startButton.x = g.game.width - this.startButton.width * 0.65;
+        this.startButton.y = g.game.height - this.startButton.height * 1.25;
         this.startButton.modified();
         this.startButton.onClickDown.add(_button => {
             this.isButtonClicked = true;
@@ -178,24 +183,56 @@ export class TitleScene extends g.Scene {
         });
         this.append(this.startButton);
 
+
+        const volume = new g.Label({
+            scene: this,
+            font: font,
+            fontSize: FontSize.SMALL,
+            text: "音量",
+            anchorX: .5,
+            anchorY: .5,
+        });
+        volume.x = this.startButton.x - (this.startButton.width - volume.width) / 2;
+        volume.y = this.startButton.y - this.startButton.height * 1.5;
+        this.append(volume);
+
+        const radioButtonFont = Common.createDynamicFont(FontSize.TINY, "sans-serif", "white");
+        const props = [{ text: "小さめ" }, { text: "ふつう", selected: true }, { text: "大きめ" }];
+        this.radioButton = new VerticalRadioButton(this, radioButtonFont, props);
+        this.radioButton.x = volume.x + volume.width * 1.5;
+        this.radioButton.y = volume.y;
+        this.radioButton.modified();
+        this.radioButton.onClicked.add(_button => {
+            if (!this.isButtonClicked) {
+                this.isButtonClicked = true;
+            }
+            this._volume = this.getVolume();
+            this.playSE("se_good");
+        });
+        this.append(this.radioButton);
+
         this.guide = new NoteGuide(this, this.posTable[0]);
         this.append(this.guide);
 
-        this.onPointDownCapture.add((ev: g.PointDownEvent) => {
-            if (ev.target !== this.startButton) {
-                this.clickListener();
-                this.keyEvent = new KeyEvent();
-                this.keyEvent.addListener();
-                this.keyEvent.onKeyDown.add(this.clickListener);
-            }
-        });
+        this.keyEvent = new KeyEvent();
+        this.keyEvent.addListener();
+        this.keyEvent.onKeyDown.add(() => this.clickListener());
+        this.onPointDownCapture.add(this.clickListener);
     };
+
+    private getVolume = (): number => this.radioButton.getSelectedIndex() * 0.25 + 0.25;
 
     private finishScene = (isClicked: boolean): void => {
         if (!this.isFinished) {
             this.isFinished = true;
             this.keyEvent?.removeListener();
-            this.onFinish.fire({ isAlreadyClicked: isClicked });
+
+            this._volume = this.getVolume();
+            this.onFinish.fire({
+                isAlreadyClicked: isClicked,
+                musicVolume: this._volume,
+                soundVolume: this._volume * TitleScene.SE_VOLUME_RATE,
+            });
         }
     };
 
@@ -228,7 +265,9 @@ export class TitleScene extends g.Scene {
         return timer;
     };
 
-    private clickListener = (): void => {
+    private clickListener = (ev?: g.PointDownEvent): void => {
+        if (ev?.target instanceof g.FilledRect) return;
+
         if (!this.isClicked) {
             this.isClicked = true;
             this.onUpdate.add(this.updateHandler);
