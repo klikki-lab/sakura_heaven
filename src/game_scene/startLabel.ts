@@ -1,5 +1,7 @@
 export class StartLabel extends g.Label {
 
+    private static readonly MAX_SCALE = 1.5;
+
     private _beat: number = 0;
     private _ticks: number = 0;
 
@@ -12,6 +14,8 @@ export class StartLabel extends g.Label {
             anchorY: .5,
             x: g.game.width / 2,
             y: g.game.height / 2,
+            scaleX: StartLabel.MAX_SCALE,
+            scaleY: StartLabel.MAX_SCALE,
         });
     }
 
@@ -22,7 +26,7 @@ export class StartLabel extends g.Label {
 
     private updateHandler = (): void | boolean => {
         if (this._ticks++ % this._beat === 0) {
-            this.scale(1.25);
+            this.scale(StartLabel.MAX_SCALE);
         } else if (this.scaleX > 1) {
             this.scale(this.scaleX * 0.92);
             if (this.scaleX <= 0.01) {

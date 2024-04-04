@@ -156,10 +156,9 @@ export class GameScene extends g.Scene {
         this.font = Common.createDynamicFont();
         this.createHudLayer();
 
-        const start = new StartLabel(this, this.font);
-        this.hudLayer.append(start);
-
-        this.createAudioPlayer(start);
+        const startLabel = new StartLabel(this, this.font);
+        this.hudLayer.append(startLabel);
+        this.createAudioPlayer(startLabel);
     };
 
     private createHudLayer = (): void => {
