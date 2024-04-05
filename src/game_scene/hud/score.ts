@@ -30,7 +30,7 @@ export class Score extends g.Label {
             this._combo++;
             this._perfectCount++;
             if (Rating.PERFECT === rating) {
-                bonus = 1;
+                bonus = 10;
             }
         } else {
             this._combo = 0;
@@ -42,7 +42,7 @@ export class Score extends g.Label {
         this._maxCombo = Math.max(this._combo, this._maxCombo);
         this._bloomimg++;
 
-        const result = Score.SCORE * (1 << (rating.scoreRate - 1)) * Math.max(1, this._combo) + bonus;
+        const result = (Score.SCORE + bonus) * (1 << (rating.scoreRate - 1)) * Math.max(1, this._combo);
         g.game.vars.gameState.score += result;
         this.text = `SCORE ${g.game.vars.gameState.score}`;
         this.invalidate();
