@@ -34,11 +34,7 @@ export class GameScene extends g.Scene {
     private waitingMessage: g.Label;
     private keyEvent: KeyEvent;
 
-    constructor(
-        _param: GameMainParameterObject,
-        private timeLimit: number,
-        private props: GameProps) {
-
+    constructor(_param: GameMainParameterObject, private timeLimit: number, private props: GameProps) {
         super({
             game: g.game,
             assetIds: [
@@ -64,7 +60,7 @@ export class GameScene extends g.Scene {
         });
         sequencer.onNote.add(_ => {
             this.playSoundEffect("se_spawn");
-            this.createNote();
+            this.appendNote();
         });
         sequencer.onFinish.add(_ => {
             this.setTimeout(() => {
@@ -85,7 +81,7 @@ export class GameScene extends g.Scene {
         return sequencer;
     };
 
-    private createNote = (): void => {
+    private appendNote = (): void => {
         const note = new SakuraNote(this, this.guide, this.sequencer.bpm);
         note.onFailed.addOnce(_note => failed());
         note.onClicked.addOnce(note => {
@@ -93,11 +89,11 @@ export class GameScene extends g.Scene {
             switch (rating) {
                 case Rating.PERFECT:
                 case Rating.SEMI_PERFECT:
-                    this.bloomSakura(rating.scoreRate, note);
+                    appendBloomSakura(rating.scoreRate, note);
                     break;
                 case Rating.EXCELLENT:
                 case Rating.GOOD:
-                    this.bloomSakura(rating.scoreRate, this.guide);
+                    appendBloomSakura(rating.scoreRate, this.guide);
                     break;
                 case Rating.BAD:
                     failed();
@@ -105,29 +101,24 @@ export class GameScene extends g.Scene {
             }
             result(rating);
         });
+        this.notesLayer.append(note);
+        
+        const appendBloomSakura = (scoreRate: number, target: g.CommonOffset): void => {
+            this.bloomLayer.append(new BloomEffect(this, target, scoreRate));
+            this.bloomLayer.append(new Bloom(this, target, scoreRate));
+        };
         const result = (rating: Rating) => {
             this.score.add(rating);
             this.playSoundEffect(rating.audioId);
-            this.createRatings(note, rating);
+            this.ratingLayer.append(new RatingScore(this, note, rating));
         };
         const failed = () => {
             this.bloomLayer.append(new Dispersal(this, note));
             result(Rating.BAD);
         };
-        this.notesLayer.append(note);
     };
 
-    private bloomSakura = (scoreRate: number, target: g.CommonOffset) => {
-        this.bloomLayer.append(new BloomEffect(this, target, scoreRate));
-        this.bloomLayer.append(new Bloom(this, target, scoreRate));
-    };
-
-    private createRatings = (note: SakuraNote, rating: Rating) => {
-        const ratingScore = new RatingScore(this, note, rating);
-        this.ratingLayer.append(ratingScore);
-    }
-
-    private updateHandler = () => {
+    private updateHandler = (): void => {
         this.sequencer.tick();
 
         const pos = this.posTable[this.sequencer.ticks % this.sequencer.bpm];
@@ -140,7 +131,7 @@ export class GameScene extends g.Scene {
         }
     };
 
-    private loadHandler = () => {
+    private loadHandler = (): void => {
         this.append(Common.createFloor(this));
 
         this.effectLayer = new g.E({ scene: this, parent: this, });
@@ -152,7 +143,7 @@ export class GameScene extends g.Scene {
         this.append(this.guide);
 
         this.font = Common.createDynamicFont();
-        this.createHudLayer();
+        this.appendHudLayer();
 
         const startLabel = new BeatLabel(this, this.font, "スタート！");
         startLabel.moveTo(g.game.width / 2, g.game.height / 2);
@@ -160,7 +151,7 @@ export class GameScene extends g.Scene {
         this.createAudioPlayer(startLabel);
     };
 
-    private createHudLayer = (): void => {
+    private appendHudLayer = (): void => {
         this.hudLayer = new g.E({ scene: this, parent: this });
 
         this.score = new Score(this, this.font);
@@ -180,7 +171,7 @@ export class GameScene extends g.Scene {
         gameOver.moveTo(g.game.width / 2, g.game.height / 2);
         gameOver.start(this.sequencer.bpm / 2);
         this.hudLayer.append(gameOver);
-        this.createCopyright(this.font);
+        this.appendCopyright(this.font);
 
         const resultRate = this.calcResultRate();
         const gameOverUpdateHandler = (): void => {
@@ -211,7 +202,7 @@ export class GameScene extends g.Scene {
         }
     };
 
-    private createCopyright = (font: g.DynamicFont) => {
+    private appendCopyright = (font: g.DynamicFont): void => {
         const text = "曲: ほんじつもうちょうてんなり (C)PANICPUMPKIN";
         const copyright = this.createLabel(font, text, FontSize.SMALL);
         copyright.x = g.game.width / 2;
@@ -318,7 +309,18 @@ export class GameScene extends g.Scene {
         }
     };
 
-    private waitScreenClick = (player: g.AudioPlayer, asset: g.AudioAsset) => {
+    private clickListener = (): void => {
+        const notes = this.notesLayer.children;
+        if (!notes) return;
+
+        for (const note of notes) {
+            if ((note instanceof SakuraNote) && note.judge()) {
+                return;
+            }
+        }
+    };
+
+    private waitScreenClick = (player: g.AudioPlayer, asset: g.AudioAsset): void => {
         this.onPointDownCapture.add(this.waitClickListener);
         this.waitingMessage = this.createLabel(Common.createDynamicFont(), "画面をクリックしてスタート！");
         this.waitingMessage.x = g.game.width / 2;
@@ -335,15 +337,4 @@ export class GameScene extends g.Scene {
     };
 
     private waitClickListener = (): void => { this.blackout.close(); };
-
-    private clickListener = (): void => {
-        const notes = this.notesLayer.children;
-        if (!notes) return;
-
-        for (const note of notes) {
-            if ((note instanceof SakuraNote) && note.judge()) {
-                return;
-            }
-        }
-    };
 }
