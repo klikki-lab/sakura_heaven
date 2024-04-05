@@ -14,7 +14,7 @@ import { BloomEffect } from "../game_scene/effect/bloomEffect";
 import { Bloom } from "../game_scene/sakura/bloom";
 import { Button } from "../common/button";
 import { KeyEvent } from "../common/keyEvent";
-import { VerticalRadioButton } from "../common/verticalRadioButton";
+import { HorizontalRadioButton } from "../common/horizontalRadioButton";
 
 export interface GameProps {
     isAlreadyClicked: boolean;
@@ -36,7 +36,7 @@ export class TitleScene extends g.Scene {
     private messageLabel: g.Label;
     private timingLabel: g.Label;
     private startButton: Button;
-    private radioButton: VerticalRadioButton;
+    private radioButton: HorizontalRadioButton;
     private effectLayer: g.E;
     private notesLayer: g.E;
     private bloomLayer: g.E;
@@ -200,8 +200,8 @@ export class TitleScene extends g.Scene {
         this.append(volume);
 
         const radioButtonFont = Common.createDynamicFont(FontSize.TINY, "sans-serif", "white");
-        const props = [{ text: "小さめ" }, { text: "ふつう", selected: true }, { text: "大きめ" }];
-        this.radioButton = new VerticalRadioButton(this, radioButtonFont, props);
+        const texts = ["小さめ", "ふつう", "大きめ"];
+        this.radioButton = new HorizontalRadioButton(this, radioButtonFont, texts, 1);
         this.radioButton.x = volume.x + volume.width * 1.5;
         this.radioButton.y = volume.y;
         this.radioButton.modified();
@@ -223,8 +223,7 @@ export class TitleScene extends g.Scene {
         this.onPointDownCapture.add(this.clickListener);
     };
 
-    private getVolume = (): number =>
-        Math.max(this.radioButton.getSelectedIndex() * 0.3 + TitleScene.MIN_VOLUME, TitleScene.MIN_VOLUME);
+    private getVolume = (): number => this.radioButton.getSelectedIndex() * 0.3 + TitleScene.MIN_VOLUME;
 
     private finishScene = (isClicked: boolean): void => {
         if (!this.isFinished) {

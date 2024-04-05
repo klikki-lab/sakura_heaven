@@ -256,14 +256,14 @@
 			"path": "script/common/button.js",
 			"global": true
 		},
-		"verticalRadioButton": {
-			"type": "script",
-			"path": "script/common/verticalRadioButton.js",
-			"global": true
-		},
 		"beatLabel": {
 			"type": "script",
 			"path": "script/common/beatLabel.js",
+			"global": true
+		},
+		"horizontalRadioButton": {
+			"type": "script",
+			"path": "script/common/horizontalRadioButton.js",
 			"global": true
 		}
 	},
