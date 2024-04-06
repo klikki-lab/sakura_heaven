@@ -4,8 +4,6 @@ import { GameMainParameterObject } from "./parameterObject";
 import { TitleScene } from "./title_scene/titleScene";
 
 export function main(param: GameMainParameterObject): void {
-    g.game.vars.version = "0.0.1";//バージョン更新忘れずに!!
-
     g.game.vars.gameState = {
         score: 0,
         playThreshold: 100,

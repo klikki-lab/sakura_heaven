@@ -24,8 +24,8 @@ export interface GameProps {
 
 export class TitleScene extends g.Scene {
 
-    private static readonly MIN_VOLUME = 0.2;
-    private static readonly SE_VOLUME_RATE = 0.75;
+    private static readonly MIN_VOLUME = 0.5;
+    private static readonly SE_VOLUME_RATE = 0.8;
 
     onFinish: g.Trigger<GameProps> = new g.Trigger();
 
@@ -200,8 +200,8 @@ export class TitleScene extends g.Scene {
         this.append(volume);
 
         const radioButtonFont = Common.createDynamicFont(FontSize.TINY, "sans-serif", "white");
-        const texts = ["小さめ", "ふつう", "大きめ"];
-        this.radioButton = new HorizontalRadioButton(this, radioButtonFont, texts, 1);
+        const texts = ["小さめ", "ふつう", "最大"];
+        this.radioButton = new HorizontalRadioButton(this, radioButtonFont, texts, 2);
         this.radioButton.x = volume.x + volume.width * 1.5;
         this.radioButton.y = volume.y;
         this.radioButton.modified();
@@ -223,7 +223,7 @@ export class TitleScene extends g.Scene {
         this.onPointDownCapture.add(this.clickListener);
     };
 
-    private getVolume = (): number => this.radioButton.getSelectedIndex() * 0.3 + TitleScene.MIN_VOLUME;
+    private getVolume = (): number => this.radioButton.getSelectedIndex() * 0.25 + TitleScene.MIN_VOLUME;
 
     private finishScene = (isClicked: boolean): void => {
         if (!this.isFinished) {
