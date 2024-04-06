@@ -196,14 +196,14 @@ export class TitleScene extends g.Scene {
             anchorY: .5,
         });
         volume.x = this.startButton.x - (this.startButton.width - volume.width) / 2;
-        volume.y = this.startButton.y - this.startButton.height * 1.5;
+        volume.y = this.startButton.y - this.startButton.height * 2;
         this.append(volume);
 
         const radioButtonFont = Common.createDynamicFont(FontSize.TINY, "sans-serif", "white");
-        const texts = ["小さめ", "ふつう", "最大"];
+        const texts = ["もっと小さい", "小さい", "大きい"];
         this.radioButton = new HorizontalRadioButton(this, radioButtonFont, texts, 2);
-        this.radioButton.x = volume.x + volume.width * 1.5;
-        this.radioButton.y = volume.y;
+        this.radioButton.x = g.game.width - this.radioButton.width * 0.925;
+        this.radioButton.y = this.startButton.y - this.radioButton.height * 3;
         this.radioButton.modified();
         this.radioButton.onClicked.add(_button => {
             this._volume = this.getVolume();
