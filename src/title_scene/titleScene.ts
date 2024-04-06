@@ -178,7 +178,7 @@ export class TitleScene extends g.Scene {
         this.startButton.modified();
         this.startButton.onClickDown.add(_button => {
             this.isButtonClicked = true;
-            this.playSE("se_good");
+            this.playSE("se_excellent");
         });
         this.startButton.onClicked.add(_button => {
             timer.stop();
