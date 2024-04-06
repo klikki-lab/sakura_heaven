@@ -2,8 +2,6 @@ import { Rating } from "../effect/ratingScore";
 
 export class Bloom extends g.Sprite {
 
-    private frames: number = 0;
-
     constructor(scene: g.Scene, pos: g.CommonOffset, scoreRate: number) {
         super({
             scene: scene,

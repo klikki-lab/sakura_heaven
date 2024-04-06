@@ -16,6 +16,7 @@ import { Common } from "../common/common";
 import { Blackout } from "./blackout";
 import { KeyEvent } from "../common/keyEvent";
 import { BeatLabel } from "../common/beatLabel";
+import { Border } from "./sakura/border";
 
 export class GameScene extends g.Scene {
 
@@ -97,12 +98,13 @@ export class GameScene extends g.Scene {
                     break;
                 case Rating.BAD:
                     failed();
+                    this.bloomLayer.append(new Border(this, this.guide));
                     return;
             }
             result(rating);
         });
         this.notesLayer.append(note);
-        
+
         const appendBloomSakura = (scoreRate: number, target: g.CommonOffset): void => {
             this.bloomLayer.append(new BloomEffect(this, target, scoreRate));
             this.bloomLayer.append(new Bloom(this, target, scoreRate));

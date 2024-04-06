@@ -265,6 +265,23 @@
 			"type": "script",
 			"path": "script/common/horizontalRadioButton.js",
 			"global": true
+		},
+		"se_base": {
+			"type": "audio",
+			"path": "audio/se_base",
+			"systemId": "sound",
+			"duration": 158,
+			"hint": {
+				"extensions": [
+					".m4a",
+					".ogg"
+				]
+			}
+		},
+		"border": {
+			"type": "script",
+			"path": "script/game_scene/sakura/border.js",
+			"global": true
 		}
 	},
 	"moduleMainScripts": {},
