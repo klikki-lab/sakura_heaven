@@ -4,8 +4,10 @@ type RatingProps = {
         readonly min: number,
         readonly max: number,
     },
-    readonly imageId: string,
-    readonly audioId: string,
+    readonly assetId: {
+        image: string,
+        sound: string,
+    }
 };
 
 type Rate = "FAILED" | "BAD" | "GOOD" | "EXCELLENT" | "SEMI_PERFECT" | "PERFECT";
@@ -21,8 +23,10 @@ export const Rating: RatingType = {
             min: -15,
             max: 15,
         },
-        imageId: "",
-        audioId: "",
+        assetId: {
+            image: "",
+            sound: "",
+        }
     },
     BAD: {
         scoreRate: 0,
@@ -30,8 +34,10 @@ export const Rating: RatingType = {
             min: -5,
             max: 5,
         },
-        imageId: "img_bad",
-        audioId: "se_bad",
+        assetId: {
+            image: "img_bad",
+            sound: "se_bad",
+        }
     },
     GOOD: {
         scoreRate: 1,
@@ -39,8 +45,10 @@ export const Rating: RatingType = {
             min: -4,
             max: 4,
         },
-        imageId: "img_good",
-        audioId: "se_good",
+        assetId: {
+            image: "img_good",
+            sound: "se_good",
+        }
     },
     EXCELLENT: {// max score 10600
         scoreRate: 2,
@@ -48,8 +56,10 @@ export const Rating: RatingType = {
             min: -2,
             max: 2,
         },
-        imageId: "img_excellent",
-        audioId: "se_excellent",
+        assetId: {
+            image: "img_excellent",
+            sound: "se_excellent",
+        }
     },
     SEMI_PERFECT: {// max score 572400
         scoreRate: 3,
@@ -57,8 +67,10 @@ export const Rating: RatingType = {
             min: -1,
             max: 1,
         },
-        imageId: "img_perfect",
-        audioId: "se_perfect",
+        assetId: {
+            image: "img_perfect",
+            sound: "se_perfect",
+        }
     },
     PERFECT: {// max score 629640
         scoreRate: 3,
@@ -66,8 +78,10 @@ export const Rating: RatingType = {
             min: 0,
             max: 0,
         },
-        imageId: "img_perfect",
-        audioId: "se_perfect",
+        assetId: {
+            image: "img_perfect",
+            sound: "se_perfect",
+        }
     }
 } as const;
 
@@ -93,7 +107,7 @@ export class RatingScore extends g.Sprite {
     constructor(scene: g.Scene, area: g.CommonArea, rating: Rating) {
         super({
             scene: scene,
-            src: scene.asset.getImageById(rating.imageId),
+            src: scene.asset.getImageById(rating.assetId.image),
             anchorX: .5,
             anchorY: .5,
             x: area.x,

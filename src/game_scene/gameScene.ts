@@ -111,7 +111,7 @@ export class GameScene extends g.Scene {
         };
         const result = (rating: Rating) => {
             this.score.add(rating);
-            this.playSoundEffect(rating.audioId);
+            this.playSoundEffect(rating.assetId.sound);
             this.ratingLayer.append(new RatingScore(this, note, rating));
         };
         const failed = () => {

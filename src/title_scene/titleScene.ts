@@ -104,7 +104,7 @@ export class TitleScene extends g.Scene {
                     failed();
                     return;
             }
-            this.playSE(rating.audioId);
+            this.playSE(rating.assetId.sound);
         });
         this.notesLayer.append(note);
 
