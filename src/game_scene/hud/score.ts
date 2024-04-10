@@ -2,7 +2,7 @@ import { Rating } from "../effect/ratingScore";
 
 export class Score extends g.Label {
 
-    private static readonly SCORE = 100;
+    private static readonly BASE_SCORE = 100;
     private _combo: number = 0;
     private _perfectCount: number = 0;
     private _maxCombo: number = 0;
@@ -26,11 +26,13 @@ export class Score extends g.Label {
 
     add = (rating: Rating): number => {
         let bonus = 0;
-        if (rating.scoreRate >= Rating.SEMI_PERFECT.scoreRate) {
+        if (rating.scoreRate >= Rating.GOOD.scoreRate) {
             this._combo++;
-            this._perfectCount++;
-            if (Rating.PERFECT === rating) {
-                bonus = 10;
+            if (rating.scoreRate >= Rating.SEMI_PERFECT.scoreRate) {
+                this._perfectCount++;
+                if (Rating.PERFECT === rating) {
+                    bonus = 10;
+                }
             }
         } else {
             this._combo = 0;
@@ -42,7 +44,7 @@ export class Score extends g.Label {
         this._maxCombo = Math.max(this._combo, this._maxCombo);
         this._bloomimg++;
 
-        const result = (Score.SCORE + bonus) * (1 << (rating.scoreRate - 1)) * Math.max(1, this._combo);
+        const result = (Score.BASE_SCORE + bonus) * rating.scoreRate + (this._combo - 1) * Score.BASE_SCORE;
         g.game.vars.gameState.score += result;
         this.text = `SCORE ${g.game.vars.gameState.score}`;
         this.invalidate();
