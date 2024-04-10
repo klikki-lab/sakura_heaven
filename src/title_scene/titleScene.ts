@@ -186,21 +186,8 @@ export class TitleScene extends g.Scene {
         });
         this.append(this.startButton);
 
-
-        const volume = new g.Label({
-            scene: this,
-            font: font,
-            fontSize: FontSize.SMALL,
-            text: "音量",
-            anchorX: .5,
-            anchorY: .5,
-        });
-        volume.x = this.startButton.x - (this.startButton.width - volume.width) / 2;
-        volume.y = this.startButton.y - this.startButton.height * 2;
-        this.append(volume);
-
         const radioButtonFont = Common.createDynamicFont(FontSize.TINY, "sans-serif", "white");
-        const texts = ["もっと小さい", "小さい", "大きい"];
+        const texts = ["もう少し小さめ", "少し小さめ", "最大"];
         this.radioButton = new HorizontalRadioButton(this, radioButtonFont, texts, 2);
         this.radioButton.x = g.game.width - this.radioButton.width * 0.925;
         this.radioButton.y = this.startButton.y - this.radioButton.height * 3;
@@ -213,6 +200,18 @@ export class TitleScene extends g.Scene {
             this.playSE("se_good");
         });
         this.append(this.radioButton);
+
+        const volume = new g.Label({
+            scene: this,
+            font: font,
+            fontSize: FontSize.SMALL,
+            text: "音量",
+            anchorX: .5,
+            anchorY: .5,
+        });
+        volume.x = this.radioButton.x - volume.width ;
+        volume.y = this.startButton.y - this.startButton.height * 2;
+        this.append(volume);
 
         this.guide = new NoteGuide(this, this.posTable[0]);
         this.append(this.guide);
