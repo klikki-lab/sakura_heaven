@@ -215,7 +215,7 @@ export class GameScene extends g.Scene {
     private createRank = (font: g.DynamicFont, resultRate: number): g.Label => {
         let rank = "";
         let msg = "";
-        if (resultRate >= 1.0) {
+        if (resultRate >= 0.9999999999999999) {
             rank = "SSS";
             msg = "パーフェクト！";
         } else if (resultRate >= 0.95) {
