@@ -39,7 +39,7 @@ export const Rating: RatingType = {
             sound: "se_bad",
         }
     },
-    GOOD: {
+    GOOD: {// max score 143100
         scoreRate: 1,
         timingWindow: {
             min: -4,
@@ -50,7 +50,7 @@ export const Rating: RatingType = {
             sound: "se_good",
         }
     },
-    EXCELLENT: {// max score 10600
+    EXCELLENT: {// max score 148400
         scoreRate: 2,
         timingWindow: {
             min: -2,
@@ -61,7 +61,7 @@ export const Rating: RatingType = {
             sound: "se_excellent",
         }
     },
-    SEMI_PERFECT: {// max score 572400
+    SEMI_PERFECT: {// max score 153700
         scoreRate: 3,
         timingWindow: {
             min: -1,
@@ -72,7 +72,7 @@ export const Rating: RatingType = {
             sound: "se_perfect",
         }
     },
-    PERFECT: {// max score 629640
+    PERFECT: {// max score 155290
         scoreRate: 3,
         timingWindow: {
             min: 0,

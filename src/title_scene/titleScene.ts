@@ -273,7 +273,7 @@ export class TitleScene extends g.Scene {
         if (!this.isClicked) {
             this.isClicked = true;
             this.onUpdate.add(this.updateHandler);
-            this.messageLabel.text = "クリックのタイミングを覚えよう！";
+            this.messageLabel.text = "クリックのタイミングを覚えよう！ (PCはZキーでも可能)";
             this.messageLabel.invalidate();
             this.titleLabel.restart();
         }
