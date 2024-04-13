@@ -3,6 +3,8 @@ import { Rating } from "../effect/ratingScore";
 export class Score extends g.Label {
 
     private static readonly BASE_SCORE = 100;
+    private static readonly COMPLETERY_PERFECT_SCORE = 155290;
+
     private _combo: number = 0;
     private _perfectCount: number = 0;
     private _maxCombo: number = 0;
@@ -23,6 +25,8 @@ export class Score extends g.Label {
     get maxCombo(): number { return this._maxCombo; }
 
     get perfectCount(): number { return this._perfectCount; }
+
+    isAbsolutelyPerfect = (): boolean => g.game.vars.gameState.score >= Score.COMPLETERY_PERFECT_SCORE;
 
     add = (rating: Rating): number => {
         let bonus = 0;

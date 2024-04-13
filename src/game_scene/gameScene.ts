@@ -216,8 +216,13 @@ export class GameScene extends g.Scene {
         let rank = "";
         let msg = "";
         if (resultRate >= 0.9999999999999999) {
-            rank = "SSS";
-            msg = "パーフェクト！";
+            if (this.score.isAbsolutelyPerfect()) {
+                rank = "神";
+                msg = "You are the SAKURA GOD!!!";
+            } else {
+                rank = "SSS";
+                msg = "パーフェクト！";
+            }
         } else if (resultRate >= 0.95) {
             rank = "SS";
             msg = "超絶満開！";
