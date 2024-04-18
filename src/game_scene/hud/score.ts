@@ -7,6 +7,7 @@ export class Score extends g.Label {
 
     private _combo: number = 0;
     private _perfectCount: number = 0;
+    private _completeryPerfectCount: number = 0;
     private _maxCombo: number = 0;
     private _bloomimg: number = 0;
 
@@ -26,6 +27,8 @@ export class Score extends g.Label {
 
     get perfectCount(): number { return this._perfectCount; }
 
+    get completeryPerfectCount(): number { return this._completeryPerfectCount; }
+
     isAbsolutelyPerfect = (): boolean => g.game.vars.gameState.score >= Score.COMPLETERY_PERFECT_SCORE;
 
     add = (rating: Rating): number => {
@@ -35,6 +38,7 @@ export class Score extends g.Label {
             if (rating.scoreRate >= Rating.SEMI_PERFECT.scoreRate) {
                 this._perfectCount++;
                 if (Rating.PERFECT === rating) {
+                    this._completeryPerfectCount++;
                     bonus = 10;
                 }
             }
@@ -48,7 +52,8 @@ export class Score extends g.Label {
         this._maxCombo = Math.max(this._combo, this._maxCombo);
         this._bloomimg++;
 
-        const result = (Score.BASE_SCORE + bonus) * rating.scoreRate + (this._combo - 1) * Score.BASE_SCORE;
+        const result = (Score.BASE_SCORE + bonus) * (rating.scoreRate * rating.scoreRate) +
+            (this._combo - 1) * Score.BASE_SCORE;
         g.game.vars.gameState.score += result;
         this.text = `SCORE ${g.game.vars.gameState.score}`;
         this.invalidate();

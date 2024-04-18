@@ -109,12 +109,12 @@ export class GameScene extends g.Scene {
             this.bloomLayer.append(new BloomEffect(this, target, scoreRate));
             this.bloomLayer.append(new Bloom(this, target, scoreRate));
         };
-        const result = (rating: Rating) => {
+        const result = (rating: Rating): void => {
             this.score.add(rating);
             this.playSoundEffect(rating.assetId.sound);
             this.ratingLayer.append(new RatingScore(this, note, rating));
         };
-        const failed = () => {
+        const failed = (): void => {
             this.bloomLayer.append(new Dispersal(this, note));
             result(Rating.BAD);
         };
@@ -216,19 +216,20 @@ export class GameScene extends g.Scene {
         let rank = "";
         let msg = "";
         if (resultRate >= 0.9999999999999999) {
-            if (this.score.isAbsolutelyPerfect()) {
+            const allNoteCount = Chart.extractNoteCount(this.sequencer.charts);
+            if (this.score.completeryPerfectCount === allNoteCount) {
                 rank = "神";
                 msg = "You are the SAKURA GOD!!!";
             } else {
                 rank = "SSS";
-                msg = "パーフェクト！";
+                msg = "オールパーフェクト！！";
             }
         } else if (resultRate >= 0.95) {
             rank = "SS";
-            msg = "超絶満開！";
+            msg = "超絶満開！アンビリバボー！！";
         } else if (resultRate >= 0.90) {
             rank = "S";
-            msg = "超満開！";
+            msg = "超満開！すごい！";
         } else if (resultRate >= 0.80) {
             rank = "A";
             msg = "満開！さらに上を目指そう！";
@@ -245,7 +246,7 @@ export class GameScene extends g.Scene {
                 msg = `${Math.floor(rate * 10)}分咲き`;
             } else {
                 rank = "E";
-                msg = "春はまだ遠い...";
+                msg = "春はまだ遠いかも...";
             }
         }
         const rankLabel = this.createLabel(font, `ランク ${rank}`, FontSize.MEDIUM);

@@ -50,7 +50,7 @@ export const Rating: RatingType = {
             sound: "se_good",
         }
     },
-    EXCELLENT: {// max score 148400
+    EXCELLENT: {// max score 159000
         scoreRate: 2,
         timingWindow: {
             min: -2,
@@ -61,7 +61,7 @@ export const Rating: RatingType = {
             sound: "se_excellent",
         }
     },
-    SEMI_PERFECT: {// max score 153700
+    SEMI_PERFECT: {// max score 185500
         scoreRate: 3,
         timingWindow: {
             min: -1,
@@ -72,7 +72,7 @@ export const Rating: RatingType = {
             sound: "se_perfect",
         }
     },
-    PERFECT: {// max score 155290
+    PERFECT: {// max score 190270
         scoreRate: 3,
         timingWindow: {
             min: 0,
