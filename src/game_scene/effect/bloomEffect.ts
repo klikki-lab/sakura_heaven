@@ -11,7 +11,7 @@ export class BloomEffect extends g.E {
     constructor(scene: g.Scene, pos: g.CommonOffset, private scoreRate: number, assetId: string = "img_sakura_no_gradation") {
         super({ scene: scene, x: pos.x, y: pos.y });
 
-        const count = scoreRate * 3;
+        const count = Math.floor(scoreRate * 3);
         for (let i = 0; i < count; i++) {
             const angle = 2 * Math.PI * (i / count) - BloomEffect.OFFSET_ANGLE;
 

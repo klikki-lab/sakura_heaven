@@ -89,6 +89,8 @@ export class GameScene extends g.Scene {
             const rating: Rating = withinTimingWindow(note.ticks);
             switch (rating) {
                 case Rating.PERFECT:
+                    appendBloomSakura(rating.scoreRate + 0.5, note);
+                    break;
                 case Rating.SEMI_PERFECT:
                     appendBloomSakura(rating.scoreRate, note);
                     break;
@@ -226,10 +228,10 @@ export class GameScene extends g.Scene {
             }
         } else if (resultRate >= 0.95) {
             rank = "SS";
-            msg = "超絶満開！アンビリバボー！！";
+            msg = "アンビリバボー！超絶満開！！";
         } else if (resultRate >= 0.90) {
             rank = "S";
-            msg = "超満開！すごい！";
+            msg = "素晴らしい！超満開！！";
         } else if (resultRate >= 0.80) {
             rank = "A";
             msg = "満開！さらに上を目指そう！";
