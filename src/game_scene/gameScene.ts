@@ -11,15 +11,17 @@ import { Bloom } from "./sakura/bloom";
 import { SakuraNote } from "./sakura/sakuraNote";
 import { NoteGuide } from "./sakura/noteGuide";
 import { BloomEffect } from "./effect/bloomEffect";
-import { GameProps } from "../title_scene/titleScene";
+import { GameProps, TitleScene } from "../title_scene/titleScene";
 import { Common } from "../common/common";
 import { Blackout } from "./blackout";
 import { KeyEvent } from "../common/keyEvent";
 import { BeatLabel } from "../common/beatLabel";
 import { Border } from "./sakura/border";
+import { Button } from "../common/button";
 
 export class GameScene extends g.Scene {
 
+    private audioPlayer: g.AudioPlayer;
     private sequencer: ChartSequencer;
     private posTable: g.CommonOffset[] = [];
     private guide: NoteGuide;
@@ -35,7 +37,7 @@ export class GameScene extends g.Scene {
     private waitingMessage: g.Label;
     private keyEvent: KeyEvent;
 
-    constructor(_param: GameMainParameterObject, private timeLimit: number, private props: GameProps) {
+    constructor(private _param: GameMainParameterObject, private timeLimit: number, private props: GameProps) {
         super({
             game: g.game,
             assetIds: [
@@ -196,6 +198,8 @@ export class GameScene extends g.Scene {
             rank.x = gameOver.x;
             rank.y = gameOver.y + gameOver.height * 2;
             this.hudLayer.append(rank);
+
+            //this.setTimeout(this.appendRetryButton, 2000);
         }
 
         if (this.blackout && !this.blackout.destroyed()) {
@@ -212,6 +216,32 @@ export class GameScene extends g.Scene {
         copyright.x = g.game.width / 2;
         copyright.y = g.game.height - copyright.height * 1.5;
         this.hudLayer.append(copyright);
+    };
+
+    private appendRetryButton = (): void => {
+        const buttonFont = Common.createDynamicFont(FontSize.MEDIUM, "sans-serif", "white");
+        const retryButton = new Button(this, buttonFont, "RETRY");
+        retryButton.x = g.game.width / 2;
+        retryButton.y = g.game.height - retryButton.height * 1.75;
+        retryButton.modified();
+        retryButton.onClickDown.add(_ => this.playSoundEffect(Rating.PERFECT.assetId.sound));
+        retryButton.onClicked.add(_ => {
+            if (this.audioPlayer.currentAudio) {
+                this.audioPlayer.stop();
+            }
+
+            this.setTimeout(() => {
+                this.keyEvent.removeListener();
+                g.game.vars.gameState.score = 0;
+
+                const titleScene = new TitleScene(this._param, 10, 0.5);
+                titleScene.onFinish.add(props => {
+                    g.game.replaceScene(new GameScene(this._param, 70, props));
+                });
+                g.game.replaceScene(titleScene);
+            }, 250);
+        });
+        this.hudLayer.append(retryButton);
     };
 
     private createRank = (font: g.DynamicFont, resultRate: number): g.Label => {
@@ -291,13 +321,13 @@ export class GameScene extends g.Scene {
 
     private createAudioPlayer = (startLabel: BeatLabel): void => {
         const audiAsset = this.asset.getAudioById("bgm_honjitsumouchoutennnari");
-        const audioPlayer = new g.MusicAudioSystem({
+        this.audioPlayer = new g.MusicAudioSystem({
             id: audiAsset.id,
             resourceFactory: g.game.resourceFactory,
             volume: this.props.musicVolume,
         }).createPlayer();
 
-        audioPlayer.onPlay.add((_ev: g.AudioPlayerEvent) => {
+        this.audioPlayer.onPlay.add((_ev: g.AudioPlayerEvent) => {
             startLabel.show();
             startLabel.start(this.sequencer.bpm / 2);
             this.setTimeout(() => startLabel.destroy(), 1000 * 4);
@@ -309,13 +339,13 @@ export class GameScene extends g.Scene {
             this.keyEvent.addListener();
             this.keyEvent.onKeyDown.add(this.clickListener);
         });
-        audioPlayer.onStop.add((ev: g.AudioPlayerEvent) => ev.player.stop());
+        this.audioPlayer.onStop.add((ev: g.AudioPlayerEvent) => ev.player.stop());
 
         if (this.props.isAlreadyClicked) {
-            audioPlayer.play(audiAsset);
+            this.audioPlayer.play(audiAsset);
         } else {
             startLabel.hide();
-            this.waitScreenClick(audioPlayer, audiAsset);
+            this.waitScreenClick(this.audioPlayer, audiAsset);
         }
     };
 

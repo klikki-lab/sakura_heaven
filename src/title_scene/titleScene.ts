@@ -181,7 +181,7 @@ export class TitleScene extends g.Scene {
             this.playSE("se_excellent");
         });
         this.startButton.onClicked.add(_button => {
-            timer.stop();
+            timer?.stop();
             this.setTimeout(() => this.finishScene(true), 100);
         });
         this.append(this.startButton);
@@ -209,7 +209,7 @@ export class TitleScene extends g.Scene {
             anchorX: .5,
             anchorY: .5,
         });
-        volume.x = this.radioButton.x - volume.width ;
+        volume.x = this.radioButton.x - volume.width;
         volume.y = this.startButton.y - this.startButton.height * 2;
         this.append(volume);
 
@@ -227,7 +227,7 @@ export class TitleScene extends g.Scene {
     private finishScene = (isClicked: boolean): void => {
         if (!this.isFinished) {
             this.isFinished = true;
-            this.keyEvent?.removeListener();
+            this.keyEvent.removeListener();
 
             this._volume = this.getVolume();
             this.onFinish.fire({
